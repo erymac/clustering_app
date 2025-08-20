@@ -1,188 +1,44 @@
-from sklearn.cluster import BisectingKMeans, AgglomerativeClustering
+from fungsi import preprocess_data, normalize, BKMeans, AHC, create_figure, compare, visualize_data, analisis, visualize_silhouette, penyesuaian, map_folium, sort_cluster
 from yellowbrick.cluster import SilhouetteVisualizer
-from yellowbrick.datasets import load_nfl
-from sklearn.datasets import load_iris
 from sklearn.metrics import silhouette_samples, silhouette_score, davies_bouldin_score
-from sklearn.preprocessing import StandardScaler
 import folium
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import time
 from datetime import date
 from io import StringIO
 import os
+import plotly.express as px
+import plotly.graph_objects as go
+import re
 
 import streamlit as st
 import pandas as pd
 import numpy as np
 
-def preprocess_data(data):
-    # df = pd.read_csv('Kacang Hijau.csv', sep=';')
-    df = data.replace(0, np.nan)
+st.set_page_config(layout="wide", page_title="Clustering Data Kacang Hijau")
 
-    column_null = df.isna().sum()/len(df) * 100
-    columns_to_drop = column_null[column_null == 100].index
-    df.drop(columns_to_drop, axis=1, inplace=True)
-
-    # Drop data with NaNs > 30% and < 100%
-    df_clean = df.set_index('Nama Kota') # Exclude 'Nama Kota' from the calculation
-    row_null_pct = df_clean.transpose().isna().sum()/len(df_clean.transpose()) * 100 # Calculate % of missing values per row
-    rows_to_drop = row_null_pct[(row_null_pct > 35) & (row_null_pct < 100)].index # Identify rows where NaNs > 30% and < 100%
-    df_clean = df_clean.drop(index=rows_to_drop) # Drop those rows
-    df_clean = df_clean.reset_index() # Reset index to restore 'Nama Kota' as a column
-    df = df_clean.copy()
-
-    # Handle missing values
-    df = df.ffill()
-    df = df.bfill()
-
-    df.columns = df.columns.astype(str) # change columns type
-
-    df_copy = df.copy()
-    df_copy.drop(['Nama Kota'], axis=1, inplace=True)
-    return df_copy
-
-def normalize(data):
-    scaler = StandardScaler()
-    scaled_data = scaler.fit_transform(data.values)
-
-    data_scaled = pd.DataFrame(scaled_data, columns=data.columns, index=data.index) # Mengubah hasil scaled_data (array) kembali menjadi DataFrame
-    data.update(data_scaled) # Memperbarui DataFrame asli
-    return data
-
-def BKMeans(data): # Fungsi metode Bisecting K-Means mengembalikan skor silhouette, DBI, dan waktu komputasi/pelatihan
-    silhouette_temp = 0
-    silhouette_bkmeans = []
-    dbi_bkmeans = []
-    waktu_bkmeans = []
-    cluster_bkmeans = []
-    waktu_avg = 0
-    db_index_temp = float('inf')
-    silhouette_avg_avg = 0
-    dbi_avg = float('inf')
-    for i in range(2, 11):
-        silhouette_total = 0
-        dbi_total = 0
-        waktu_total = 0
-        cluster_bkmeans.append(i)
-        for j in range (5):
-            bkm_clusterer = BisectingKMeans(n_clusters=i, random_state=np.random.randint(1,5000), n_init = 1, bisecting_strategy='largest_cluster')
-
-            start = time.time()
-            cluster_labels = bkm_clusterer.fit_predict(data)
-            end = time.time()
-            waktu = end - start
-            waktu_total = waktu_total + waktu
-
-            silhouette_avg = silhouette_score(data, cluster_labels)
-            silhouette_total = silhouette_total + silhouette_avg
-
-            db_index = davies_bouldin_score(data, cluster_labels)
-            dbi_total = dbi_total + db_index
-
-        silhouette_avg_avg = silhouette_total/5
-        dbi_avg = dbi_total/5
-        waktu_avg = waktu_total/5
-
-        silhouette_bkmeans.append(round(silhouette_avg_avg, 3))
-        dbi_bkmeans.append(round(dbi_avg, 3))
-        waktu_bkmeans.append(round(waktu_avg, 5))
-
-        if silhouette_avg_avg > silhouette_temp:
-            silhouette_temp = silhouette_avg
-            waktu_temp = waktu
-            num_cluster = i
-
-        if dbi_avg < db_index_temp:
-            db_index_temp = db_index
-            db_waktu_temp = waktu
-            db_num_cluster = i
-
-    df_bkmeans = pd.DataFrame(columns=['Cluster', 'Silhouette Score', 'DBI Score'])
-    df_bkmeans['Cluster'] = cluster_bkmeans
-    df_bkmeans['Silhouette Score'] = silhouette_bkmeans
-    df_bkmeans['DBI Score'] = dbi_bkmeans
-    df_bkmeans.set_index(['Cluster'], inplace=True)
-
-    dfwaktu_bkmeans = pd.DataFrame(columns=['Cluster', 'Waktu Komputasi'])
-    dfwaktu_bkmeans['Cluster'] = cluster_bkmeans
-    dfwaktu_bkmeans['Waktu Komputasi'] = waktu_bkmeans
-    dfwaktu_bkmeans.set_index(['Cluster'], inplace=True)
-    return df_bkmeans, dfwaktu_bkmeans
-
-def AHC(data): # Fungsi metode AHC mengembalikan skor silhouette, DBI, dan waktu komputasi/pelatihan
-    silhouette_ahc = []
-    dbi_ahc = []
-    waktu_ahc = []
-    exp_ahc = []
-    cluster_ahc = []
-    silhouette_temp = 0
-    db_index_temp = float('inf')
-    silhouette_avg_avg = 0
-    waktu_avg = 0
-    dbi_avg = float('inf')
-    for i in range(2, 11):
-        silhouette_total = 0
-        dbi_total = 0
-        waktu_total = 0
-        cluster_ahc.append(i)
-        for j in range (5):
-            ahc_clusterer = AgglomerativeClustering(n_clusters=i, metric='euclidean', linkage='average')
-            print (ahc_clusterer)
-
-            start = time.time()
-            cluster_labels = ahc_clusterer.fit_predict(data)
-            end = time.time()
-            waktu = end - start
-            waktu_total = waktu_total + waktu
-
-            silhouette_avg = silhouette_score(data, cluster_labels)
-            silhouette_total = silhouette_total + silhouette_avg
-
-            db_index = davies_bouldin_score(data, cluster_labels)
-            dbi_total = dbi_total + db_index
-
-        silhouette_avg_avg = silhouette_total/5
-        dbi_avg = dbi_total/5
-        waktu_avg = waktu_total/5
-
-        silhouette_ahc.append(round(silhouette_avg_avg, 3))
-        dbi_ahc.append(round(dbi_avg, 3))
-        waktu_ahc.append(round(waktu_avg, 5))
-
-        if silhouette_avg_avg > silhouette_temp:
-            silhouette_temp = silhouette_avg
-            waktu_temp = waktu
-            num_cluster = i
-            labels = cluster_labels
-            clusterer = ahc_clusterer
-
-        if dbi_avg < db_index_temp:
-            db_index_temp = db_index
-            db_waktu_temp = waktu
-            db_num_cluster = i
-    
-    df_ahc = pd.DataFrame(columns=['Cluster', 'Silhouette Score', 'DBI Score'])
-    df_ahc['Cluster'] = cluster_ahc
-    df_ahc['Silhouette Score'] = silhouette_ahc
-    df_ahc['DBI Score'] = dbi_ahc
-
-    dfwaktu_ahc = pd.DataFrame(columns=['Cluster', 'Waktu Komputasi'])
-    dfwaktu_ahc['Cluster'] = cluster_ahc
-    dfwaktu_ahc['Waktu Komputasi'] = waktu_ahc
-
-    df_ahc.set_index(['Cluster'],inplace=True)
-    dfwaktu_ahc.set_index(['Cluster'],inplace=True)
-    return df_ahc, dfwaktu_ahc
+with open( "app\style.css" ) as css:
+    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 
 #Home Page
 def home():
-    multi = '''Klasterisasi Data Kacang Hijau di Indonesia
-    '''
-    st.markdown('---')
-    st.markdown(f"<h1 style='text-align: center; color: #111A19;'>{multi}</h1>", unsafe_allow_html=True)
-    st.write("Kumpulan data luas panen, produksi, dan produktivitas sektor pangan dapat diperoleh dari situs [Basis Data Statistik Pertanian (BDSP)](https://bdsp2.pertanian.go.id/bdsp/id/lokasi). Pastikan file yang diunggah berbentuk csv / xlsx / xls.")
+    st.markdown('<h1 class="custom-header" style="align: center; margin-top: 36px; color: black; margin-bottom: 30px; font-family: Inter;">Clustering Data Kacang Hijau</h1>',
+                unsafe_allow_html=True)
+    # info = """
+    # Data bisa diambil dari situs [Basis Data Statistik Pertanian (BDSP)](https://bdsp2.pertanian.go.id/bdsp/id/lokasi).
+    # Pastikan file yang diunggah berbentuk csv / xlsx / xls.
+    # """
+    # st.markdown(info)
+    data_path = 'https://bdsp2.pertanian.go.id/bdsp/id/lokasi'
+    data_sample = 'Kacang Hijau.csv'
+    st.markdown(
+        f'''<p style="display: block; text-align: center;">
+        <a href="{data_path}" target="_self">Sumber Data</a> | 
+        <a> href="{data_sample}" target="_self">Contoh Data</a>
+        </p>''',
+        unsafe_allow_html=True
+    )
 
     uploaded_file = st.file_uploader("Choose a file")
     if uploaded_file is not None:
@@ -195,73 +51,303 @@ def home():
             dataframe = pd.read_excel(uploaded_file, engine='xlrd')
         else:
             st.error("Jenis file tidak didukung. Harap unggah file Excel (.csv / .xls / .xlsx).")
-        # st.dataframe(dataframe)
 
-    option = st.selectbox(
-        "Metode klasterisasi apa yang ingin digunakan?",
-        ("Bisecting K-Means", "Agglomerative Hierarchical Clustering (AHC)", "Bisecting K-Means dan AHC"),
-        index=None,
-        placeholder="Pilih metode klasterisasi...",
+    if "bkmeans" and "ahc" not in st.session_state:
+        st.session_state.disabled = True
+
+    st.markdown(
+        """
+        <div style='font-size:20px; text-align: center; font-family: Inter;'>
+            Metode clustering apa yang ingin digunakan?
+        </div>
+        """,
+        unsafe_allow_html=True
     )
+
+    # subcol1, subcol2, subcol3, subcol4 = st.columns([4,2,1,3])
+    # with subcol1:
+    #     method1 = st.checkbox("Bisecting K-Means", key="bkmeans")
+    #     method2 = st.checkbox("Agglomerative Hierarchical Clustering (AHC)", key="ahc")
+
+    #     enabled = method1 or method2
+
+    # with subcol2:
+    #     cluster = st.selectbox(
+    #         "",
+    #         ("2 - 10", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
+    #         disabled = not enabled,
+    #         index=None,
+    #         placeholder="Pilih banyak cluster..."
+    #         )
+
+    # with subcol4:
+    #     if method2:
+    #         linkage = st.selectbox(
+    #             "",
+    #             ("Ward", "Average", "Complete", "Single"),
+    #             index=None,
+    #             placeholder="Pilih jenis linkage..."
+    #             )
+
+    # column1, column2, column3 = st.columns([3,1,3])
+    # with column2 :
+    #     mulai = st.button("Mulai Clustering")
+
+    cols = st.columns([6,5,6,3], vertical_alignment="top", gap="medium")
+    with cols[0]:
+        metode = st.selectbox(
+            "",
+            ("Bisecting K-Means", "Agglomerative Hierarchical Clustering (AHC)", "Bisecting K-Means dan AHC"),
+            index=None,
+            placeholder="Pilih metode clustering..."
+        )
+        enabled = metode != ""
+
+    #     method1 = st.checkbox("Bisecting K-Means", key="bkmeans")
+    #     method2 = st.checkbox("Agglomerative Hierarchical Clustering (AHC)", key="ahc")
+    #     enabled = method1 or method2
+    with cols[1]:
+        cluster = st.selectbox(
+            "",
+            ("2 - 10", "2", "3", "4", "5"),
+            disabled = not enabled,
+            index=None,
+            placeholder="Pilih banyak cluster..."
+            )
+    with cols[2]:
+        # if method2:
+        if metode == "Agglomerative Hierarchical Clustering (AHC)" or metode == "Bisecting K-Means dan AHC":
+            linkage = st.selectbox(
+                "",
+                ("Ward", "Average", "Complete", "Single"),
+                index=None,
+                placeholder="Pilih jenis linkage..."
+                )
+    with cols[3]:
+        st.markdown("<div style='width: 1px; height: 28px; align-items: center; display: flex;'></div>", unsafe_allow_html=True)
+        mulai = st.button("Mulai Clustering")
+
+    st.markdown("<br>", unsafe_allow_html=True)
     
-    if st.button("Mulai Klasterisasi"):
-        df_copy = preprocess_data(dataframe)
-        # st.dataframe(df_copy)
-        df_copy = normalize(df_copy) # Normalize data
-        if option == "Bisecting K-Means":
-            df_bkmeans, dfwaktu_bkmeans = BKMeans(df_copy)
-            # plot = visualize_model(df_bkmeans)
-            col1, col2 = st.columns([3, 1])
-            col1.subheader("Skor Silhouette dan DBI dari Setiap Cluster")
-            col1.line_chart(df_bkmeans, color=["#BD4B46", "#8D957E"])
+    if mulai:
+        if uploaded_file is not None:
+            # dataframe = preprocess_data(dataframe)
+            # df_copy = dataframe.copy()
+            # df_array = normalize(df_copy) # Normalize data
             
-            col2.subheader("Waktu Komputasi")
-            col2.write(dfwaktu_bkmeans)
-        elif option == "Agglomerative Hierarchical Clustering (AHC)":
-            df_ahc, dfwaktu_ahc = BKMeans(df_copy)
-            col1, col2 = st.columns([3, 1])
-            col1.subheader("Skor Silhouette dan DBI dari Setiap Cluster")
-            col1.line_chart(df_ahc, color=["#BD4B46", "#8D957E"])
-            
-            col2.subheader("Waktu Komputasi")
-            col2.write(dfwaktu_ahc)
+            dataframe = preprocess_data(dataframe)
+            df_copy = dataframe.copy()
+            df_copy.drop(['Nama Kota'], axis=1, inplace=True)
+            # df_array = normalize(df_copy.copy()) # Normalize data
+            df_array = df_copy.copy().values
+            print(type(df_array))
+
+            if cluster == "2 - 10": # Menentukan jumlah cluster utk input
+                n_cluster = range(2,11)
+            elif cluster is None:
+                st.warning("Pilih banyak cluster data.")
+            else:
+                cluster_int = int(cluster)
+                n_cluster = range(cluster_int, cluster_int+1)
+            # if method1 and not method2: # Jika memilih metode Bisecting K-Means
+            if metode == "Bisecting K-Means":
+                # metode = "Bisecting K-Means"
+                df_bkmeans, dfwaktu_bkmeans, silhouette_bkmeans, dbi_bkmeans, _, bestcluster_bkmeans, labels_bkmeans = BKMeans(df_array, n_cluster)
+                create_figure(cluster, df_bkmeans, dfwaktu_bkmeans, metode)
+                analisis(metode, bestcluster_bkmeans, silhouette_bkmeans, dbi_bkmeans, cluster)
+
+                dataframe['Cluster'] = labels_bkmeans
+                dataframe = sort_cluster(dataframe)
+                
+                cols = st.columns(2, gap="small", vertical_alignment="top", border=True)
+                with cols[0]:
+                    df_temp = penyesuaian(dataframe)
+                    # map_out(dataframe)
+                    map_folium(df_temp, bestcluster_bkmeans)
+                    # map_out(dataframe, bestcluster_bkmeans)
+                with cols[1]:
+                    visualize_data(df_copy, labels_bkmeans, metode)
+                    visualize_silhouette(df_array, labels_bkmeans, bestcluster_bkmeans, silhouette_bkmeans, metode)                
+
+            elif metode == "Agglomerative Hierarchical Clustering (AHC)":
+                if linkage is not None:
+                    linkage = linkage.lower()
+                    metode = "Agglomerative Hierarchical Clustering"
+                    df_ahc, dfwaktu_ahc, silhouette_ahc, dbi_ahc, _, bestcluster_ahc, labels_ahc = AHC(df_array, n_cluster, linkage)
+                    create_figure(cluster, df_ahc, dfwaktu_ahc, metode)
+                    analisis(metode, bestcluster_ahc, silhouette_ahc, dbi_ahc, bestcluster_ahc)
+
+                    dataframe['Cluster'] = labels_ahc
+
+                    subsubcol1, subsubcol2 = st.columns(2)
+                    with subsubcol1:
+                        visualize_silhouette(df_array, labels_ahc, bestcluster_ahc, silhouette_ahc, metode)
+                    with subsubcol2:
+                        visualize_data(df_copy, labels_ahc, metode)
+                else:
+                    st.warning("Jenis linkage metode AHC belum dipilih.")
+            # elif method1 and method2: # Ketika memilih kedua metode, akan dibandingkan
+            elif metode == "Bisecting K-Means dan AHC":
+                if linkage is not None:
+                    linkage = linkage.lower()
+                    df_bkmeans, dfwaktu_bkmeans, silhouette_bkmeans, dbi_bkmeans, avg_silhouette_bkmeans, bestcluster_bkmeans, labels_bkmeans = BKMeans(df_array, n_cluster)
+                    df_ahc, dfwaktu_ahc, silhouette_ahc, dbi_ahc, avg_silhouette_ahc, bestcluster_ahc, labels_ahc = AHC(df_array, n_cluster, linkage)
+                    df_bkmeans['Metode'] = 'Bisecting K-Means'
+                    df_ahc['Metode'] = 'AHC'
+
+                    # Menyimpan nama metode
+                    metode1 = 'Bisecting K-Means'
+                    metode2 = 'AHC'
+
+                    if cluster == "2 - 10":
+                        method_dataframe = pd.concat([df_bkmeans, df_ahc], ignore_index=False)
+                        method_dataframe = method_dataframe.reset_index() # Reset index
+                        df_long = method_dataframe.melt(
+                            id_vars=['Cluster', 'Metode'],
+                            value_vars=['Silhouette Score', 'DBI Score'],
+                            var_name='Skor',
+                            value_name='Nilai'
+                        )
+
+                        fig_silhouette = px.line(
+                            method_dataframe,
+                            x='Cluster',
+                            y='Silhouette Score',
+                            color='Metode',
+                            markers=True,
+                            title='Silhouette Score',
+                            color_discrete_map={
+                                'Bisecting K-Means': '#BD4B46',
+                                'AHC': '#8D957E'
+                            }
+                        )
+
+                        # Plot DBI Score
+                        fig_dbi = px.line(
+                            method_dataframe,
+                            x='Cluster',
+                            y='DBI Score',
+                            color='Metode',
+                            markers=True,
+                            title='DBI Score',
+                            color_discrete_map={
+                                'Bisecting K-Means': '#BD4B46',
+                                'AHC': '#8D957E'
+                            }
+                        )
+
+                        subsubcol1, subsubcol2 = st.columns(2)
+                        with subsubcol1:
+                            st.plotly_chart(fig_silhouette, use_container_width=True)
+
+                        with subsubcol2:
+                            st.plotly_chart(fig_dbi, use_container_width=True)
+                        result = compare(silhouette_bkmeans, silhouette_ahc, dbi_bkmeans, dbi_ahc, avg_silhouette_bkmeans, avg_silhouette_ahc, bestcluster_bkmeans, bestcluster_ahc)
+
+                        subsubcol1, subsubcol2 = st.columns(2)
+                        with subsubcol1:
+                            visualize_data(df_copy, labels_bkmeans, metode1)
+                            if result == 'BKMeans':
+                                visualize_silhouette(df_array, labels_bkmeans, bestcluster_bkmeans, silhouette_bkmeans, metode1)
+                                dataframe['Cluster'] = labels_bkmeans
+                            elif result == 'AHC':
+                                visualize_silhouette(df_array, labels_ahc, bestcluster_ahc, silhouette_ahc, metode2)
+                                dataframe['Cluster'] = labels_ahc
+                            else:
+                                st.warning("Hasil metode tidak ditemukan.")
+                        with subsubcol2:
+                            visualize_data(df_copy, labels_ahc, metode2)
+
+                    else:
+                        waktu_bkmeans = dfwaktu_bkmeans.values[0][0]
+                        waktu_ahc = dfwaktu_ahc.values[0][0]
+
+                        singlcol1, singlcol2, singlcol3 = st.columns([5,1,10])
+                        with singlcol1:
+                            df_bkmeans['Waktu Komputasi (detik)'] = dfwaktu_bkmeans
+                            df_bkmeans.reset_index(inplace=True, drop=True)
+                            df_bkmeans.index = df_bkmeans['Metode']
+                            # df_bkmeans.drop(columns='Metode', inplace=True)
+                            
+                            df_ahc['Waktu Komputasi (detik)'] = dfwaktu_ahc
+                            df_ahc.reset_index(inplace=True, drop=True)
+                            df_ahc.index = df_ahc['Metode']
+                            # df_ahc.drop(columns='Metode', inplace=True)
+
+                            df_compare = pd.concat([df_bkmeans, df_ahc], ignore_index=True)
+                            df_compare = df_compare.set_index('Metode').T
+                            st.dataframe(df_compare)
+                        with singlcol3:
+                            result = compare(silhouette_bkmeans, silhouette_ahc, dbi_bkmeans, dbi_ahc, avg_silhouette_bkmeans, avg_silhouette_ahc, bestcluster_bkmeans, bestcluster_ahc)
+                            if result == "Waktu":
+                                if waktu_bkmeans < waktu_ahc:
+                                    st.info(f"""
+                                    ##### Hasil perbandingan :  
+                                    Nilai silhouette dan DBI Bisecting K-Means dan AHC sama namun rata-rata waktu komputasi Bisecting K-Means lebih cepat, sebesar {waktu_bkmeans:.4f} detik.
+                                    """)
+                                    result = 'BKMeans'
+                                else:
+                                    st.info(f"""
+                                    ##### Hasil perbandingan :  
+                                    Nilai silhouette dan DBI Bisecting K-Means dan AHC sama namun rata-rata waktu komputasi AHC lebih cepat, sebesar {waktu_ahc:.4f} detik.
+                                    """)
+                                    result = 'AHC'
+
+                        subsubcol1, subsubcol2 = st.columns(2)
+                        with subsubcol1:
+                            visualize_data(df_copy, labels_bkmeans, metode1)
+                            if result == 'BKMeans':
+                                visualize_silhouette(df_array, labels_bkmeans, bestcluster_bkmeans, silhouette_bkmeans, metode1)
+                                dataframe['Cluster'] = labels_bkmeans
+                            elif result == 'AHC':
+                                visualize_silhouette(df_array, labels_ahc, bestcluster_ahc, silhouette_ahc, metode2)
+                                dataframe['Cluster'] = labels_ahc
+                            else:
+                                st.warning("Hasil metode tidak ditemukan.")
+                        with subsubcol2:
+                            visualize_data(df_copy, labels_ahc, metode2)
+                else:
+                    st.warning("Jenis linkage metode AHC belum dipilih.")
         else:
-            df_bkmeans, dfwaktu_bkmeans = BKMeans(df_copy)
-            df_ahc, dfwaktu_ahc = BKMeans(df_copy)
-            col1, col2 = st.columns(2)
-            col1.subheader("Skor Silhouette dan DBI Metode Bisecting K-Means")
-            col1.line_chart(df_bkmeans, color=["#BD4B46", "#BD4B46"])
-            col1.line_chart(df_ahc, color=["#8D957E", "#8D957E"])
-            
-            table = st.table(df_bkmeans)
-            col2.subheader("Skor Silhouette dan DBI Metode AHC")
-            col2.line_chart(df_ahc, color=["#BD4B46", "#8D957E"])
+            st.error("File tidak ditemukan / belum diunggah.")
 
 def about():
     st.write("This is the about page")
-    st.title(f"{current_page.title}")
 
 def help():
     st.write("This is the help page")
 
-pages = [
-    st.Page(home, icon=":material/home:", title="Home"),
-    st.Page(about, icon=":material/info:", title="About"),
-    st.Page(help, icon=":material/settings:", title="Help")
-]
+# pages = [
+#     st.Page(home, icon=":material/home:", title="Home"),
+#     st.Page(about, icon=":material/info:", title="About"),
+#     st.Page(help, icon=":material/settings:", title="Help")
+# ]
 
-current_page = st.navigation(pages=pages, position="hidden")
+# Get page from URL query params
+query_params = st.query_params
+page = query_params.get("page", "home")  # Default to 'Home' if none
 
-st.set_page_config(layout="wide", page_title='Clustering Data BDSP',)
+# Build nav bar
+st.markdown("""
+    <div class='nav-text'>
+        <span class='nav-title'>Clustering Data Kacang Hijau</span>
+        <span style='float: right;'>
+            <a class='nav-link' href='?page=home' target='_self'>Home</a>
+            <a class='nav-link' href='?page=about' target='_self'>About</a>
+            <a class='nav-link' href='?page=help' target='_self'>Help</a>
+        </span>
+    </div>
+""", unsafe_allow_html=True)
 
-num_cols = max(len(pages) + 1, 8)
+# --- Route content based on page ---
+st.write("")
 
-columns = st.columns(num_cols, vertical_alignment="bottom")
-
-columns[0].write("**Clustering Data BDSP**")
-# columns[0].write(str(date.today()))
-
-for col, page in zip(columns[5:], pages):
-    col.page_link(page, icon=page.icon)
-
-current_page.run()
+if page == "home":
+    home()
+elif page == "about":
+    about()
+elif page == "help":
+    st.title("Help Page")
+    st.write("Need help? Here's how to use the app...")
+else:
+    st.title("Page not found")
