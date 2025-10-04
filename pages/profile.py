@@ -15,29 +15,7 @@ def content():
 query_params = st.query_params
 page = query_params.get("page", "home")  # Default to 'Home' if none
 
-st.markdown("""
-<nav class='navbar fixed-top navbar-dark' style='background-color: #984216;'>
-    <div class='container'>
-        <span class='nav-title'>Clustering Data Kacang Hijau</span>
-        <div class='nav-text navbar-nav'>
-            <ul class='nav justify-content-end '>
-                <li class='nav-item'>
-                    <a class='nav-link' href='/'>Home</a>
-                </li>
-                <li class='nav-item'>
-                    <a class='nav-link' href='/analyze'>Analisis Data</a>
-                </li>
-                <li class='nav-item'>
-                    <a class='nav-link' href='/about'>Tentang</a>
-                </li>
-                <li class='nav-item'>
-                    <a class='nav-link' href='/profile'>Profil</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-""", unsafe_allow_html=True)
+show_navbar()
 
 content()
 # # --- Route content based on page ---

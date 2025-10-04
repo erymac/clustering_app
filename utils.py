@@ -1,26 +1,60 @@
 import streamlit as st
 
 def show_navbar():
-    # <a class="nav-link disabled" href="#">Home <span class="sr-only">(current)</span></a>
+    # # <a class="nav-link disabled" href="#">Home <span class="sr-only">(current)</span></a>
+    # st.markdown("""
+    # <nav class='navbar fixed-top navbar-dark' style='background-color: #984216;'>
+    #     <div class='container'>
+    #         <span class='nav-title'>Clustering Data Kacang Hijau</span>
+    #         <div class='nav-text navbar-nav'>
+    #             <ul class='nav justify-content-end '>
+    #                 <li class='nav-item'>
+    #                     <a class='nav-link active' href='?page=home'>Home</a>
+    #                 </li>
+    #                 <li class='nav-item'>
+    #                     <a class='nav-link active' href='?page=about' target='_self'>About</a>
+    #                 </li>
+    #                 <li class='nav-item'>
+    #                     <a class='nav-link active' href='?page=profile' target='_self'>Profile</a>
+    #                 </li>
+    #             </ul>
+    #         </div>
+    #     </div>
+    # </nav>
+    # """, unsafe_allow_html=True)
     st.markdown("""
-    <nav class='navbar fixed-top navbar-dark' style='background-color: #984216;'>
+    <nav class='navbar fixed-top navbar-dark' style='background-color: #183a1d;'>
         <div class='container'>
-            <span class='nav-title'>Clustering Data Kacang Hijau</span>
+            <span class='nav-title' style='color: #f0e0b1;'>Clustering Data Kacang Hijau</span>
             <div class='nav-text navbar-nav'>
-                <ul class='nav justify-content-end '>
+                <ul class='nav justify-content-end'>
                     <li class='nav-item'>
-                        <a class='nav-link active' href='?page=home'>Home</a>
+                        <a class='nav-link' href='/'>Home</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link active' href='?page=about' target='_self'>About</a>
+                        <a class='nav-link' href='/about'>Tentang</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link active' href='?page=profile' target='_self'>Profile</a>
+                        <a class='nav-link' href='/profile'>Profil</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+    """, unsafe_allow_html=True)
+
+    # Add a minimal hover effect with light underline and subtle pale green
+    st.markdown("""
+        <style>
+            .navbar-dark .navbar-nav .nav-link {
+                color: #f0e0b1;  /* Off-white text color */
+                transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
+            }
+            
+            .navbar-dark .navbar-nav .nav-link:hover {
+                color: #ff6f61;  /* Bright orange on hover */
+            }
+        </style>
     """, unsafe_allow_html=True)
 
 def what_page():

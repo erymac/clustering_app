@@ -27,7 +27,40 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
+def validate_columns_and_data(data, required_columns):
+    # Cek jika kolom ditemukan (e.g., 'Luas Panen', 'Produksi', etc.)
+    missing_columns = []
+    for col in required_columns:
+        matching_columns = [c for c in data.columns if c.startswith(col)]
+        if not matching_columns:
+            missing_columns.append(col)
+    
+    if missing_columns:
+        raise ValueError(f"Kolom-kolom berikut tidak ditemukan: {', '.join(missing_columns)}")
+
+    # Check if all matching columns contain numeric data
+    for col in required_columns:
+        matching_columns = [c for c in data.columns if c.startswith(col)]
+        
+        for matching_col in matching_columns:
+            if matching_col == 'Lokasi':
+                continue
+            # Check if the data in the column is numeric
+            if not pd.to_numeric(data[matching_col], errors='coerce').notna().all():
+                raise ValueError(f"Kolom '{matching_col}' mengandung nilai non-numerik. Harap perbaiki data.")
+    
+    return True  # If all validations pass, return True
+
 def preprocess_data(data):
+    # numeric_columns = [col for col in data.columns if col != 'Lokasi']
+    # for col in numeric_columns:
+    #     # If the column contains non-numeric values, set them as NaN
+    #     data[col] = pd.to_numeric(data[col], errors='coerce')
+        
+    #     # If any NaN values were created (indicating invalid data), raise an error
+    #     if data[col].isna().any():
+    #         raise ValueError(f"Kolom '{col}' berisi nilai non-numerik. Silakan perbaiki terlebih dahulu sebelum melanjutkan.")
+        
     data = data.replace(0, np.nan)
 
     column_null = data.isna().sum()/len(data) * 100
@@ -574,7 +607,7 @@ def graph_comparison(data):
     fig.show()
 
 def plot_panen_trends(df, default_metric="Produksi", default_order="Terbesar ▶️", default_n_locations=5):
-    st.subheader("📈 Tren Hasil Panen Kakao")
+    fitur = ['Luas', 'Produksi', 'Produktivitas']
     
     # Add search functionality
     with st.container():
@@ -591,8 +624,8 @@ def plot_panen_trends(df, default_metric="Produksi", default_order="Terbesar ▶
         with col1:
             metric = st.selectbox(
                 "Pilih Fitur:",
-                options=FEATURE_PANEN,
-                index=FEATURE_PANEN.index(default_metric),
+                options=fitur,
+                index=fitur.index(default_metric),
                 key="trend_metric"
             )
             
@@ -795,7 +828,8 @@ def show_prod_dan_lp(df):
 
     # Update layout
     fig.update_layout(
-        title='Tren Produksi dan Luas Panen Kacang Hijau per Tahun',
+        title='Produksi dan Luas Panen Kacang Hijau per Tahun',
+        title_font_size=20,
         xaxis_title='Tahun',
         yaxis_title='Nilai',
         hovermode='x unified',
@@ -905,7 +939,8 @@ def show_n_cluster(df, kategori, metode):
     fig = px.pie(cluster, values='Jumlah', names='Cluster', title=f'Jumlah Anggota Cluster {metode}')
     fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=17,
                     marker=dict(colors=colors, line=dict(color='#000000', width=1)))
-    fig.update_layout(legend_title='Cluster')
+    fig.update_layout(legend_title='Cluster',
+                        title_font_size=20)
     st.plotly_chart(fig)
 
 def compare_cluster(df, nama_kolom, height=900, direction='vertical'):
@@ -1025,17 +1060,43 @@ def plot_data_cluster(df, label_clusters, metode, pca_components=2):
         '4': '#22763F'
     }
 
-    # Create Plotly scatter plot
+    # fig = px.scatter(df_pca, x='PC1', y='PC2', color='Cluster',
+    #                  labels={'PC1': 'x', 'PC2': 'y'},
+    #                  color_discrete_map=scatter_color, height=400,
+    #                  title=f"Ruang Fitur Cluster dengan {metode}"
+    #                 )
+
+    # # Adjust opacity and size of the markers (dots)
+    # fig.update_traces(marker=dict(opacity=0.6, size=10))  # 0.6 means 60% opacity (more transparent)
+    # fig.update_layout(title_font_size=20)
+
+    # # Show the figure
+    # st.plotly_chart(fig)
     fig = px.scatter(df_pca, x='PC1', y='PC2', color='Cluster',
-                     labels={'PC1': 'x', 'PC2': 'y'},
-                     color_discrete_map=scatter_color, height=400,
-                     title=f"Scatter Plot Cluster dengan {metode}"
+                    labels={'PC1': 'x', 'PC2': 'y'},
+                    color_discrete_map=scatter_color, height=400,
+                    title=f"Ruang Fitur Cluster dengan {metode}"
                     )
 
     # Adjust opacity and size of the markers (dots)
     fig.update_traces(marker=dict(opacity=0.6, size=10))  # 0.6 means 60% opacity (more transparent)
 
-    # Show the figure
+    # Update the layout for gridlines
+    fig.update_layout(
+        title_font_size=20,
+        xaxis=dict(
+            showgrid=True,             # Show gridlines on x-axis
+            gridcolor='lightgrey',     # Color of gridlines
+            gridwidth=1,               # Thickness of gridlines
+        ),
+        yaxis=dict(
+            showgrid=True,             # Show gridlines on y-axis
+            gridcolor='lightgrey',     # Color of gridlines
+            gridwidth=1,               # Thickness of gridlines
+        )
+    )
+
+    # Display the figure
     st.plotly_chart(fig)
 
 
