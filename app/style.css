@@ -1,5 +1,6 @@
 /* @import url('https://fonts.googleapis.com/css?family=Inter');  */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Homemade+Apple'); */
 
 /* html, body [class*="css"] {
     font-family: 'Inter'; 
@@ -27,10 +28,14 @@ span {
     transition: 0.3s;
 } */
 
+.pdata {
+    display: block;
+    text-align: center;
+    margin-bottom: -13px;
+}
+
 .custom-header {
     font-family: 'Inter';
-    font-weight: 700;
-    font-size: 40px;
     text-align: center;
 }
 
@@ -41,39 +46,41 @@ span {
     border-radius: 6px;
     font-weight: 500;
     /* position: fixed; */
-    top: 50;
+    /* top: 50;
     left: 0;
     right: 0;
     height: 70px;
-    z-index: 1000;
+    z-index: 1000; */
 }
 .nav-title {
     font-size: 20px;
     font-weight: bold;
     color: white;
+    border-radius: 0%;
 }
 .nav-link {
     text-decoration: none;
     color: white;
-    margin-left: 25px;
 }
 .nav-link:hover {
     text-decoration: underline;
     color: #F4F0E5;
 }
 .nav-text a {
+    font-size: 17px;
     color: #F4F0E5;
     text-decoration: none;
-    padding: 5px 22px;
+    padding: 0 0 0 60px;
 }
 
 div.stButton > button:first-child {
     background-color: #8D957E;
     color: white;           /* Button text color */
     border: none;               /* Optional: remove default border */
-    padding: 7px 20px;
+    padding: 7px 22px;
     border-radius: 39px;
-    min-width: 120px;
+    min-width: 130px;
+    height: 40px;
     text-align: center;
 }
 
@@ -108,4 +115,26 @@ div.st-emotion-cache-mxeqmx {
 
 .stHeadingWithActionElements {
     font-family: 'Inter';
+}
+
+/* .st-bc {
+    height: 45px;
+} */
+/* 
+.st-dj {
+    align-content: center;
+}
+
+.st-dz, .st-cv {
+    align-content: center;
+    height: 0px;
+} */
+
+.footer {
+    padding: 0 100px 0 100px;
+    align-items: center;
+}
+
+.border-primary:nth-child(1) {
+  border-color: #E6DCCE !important;
 }
