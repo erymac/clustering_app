@@ -9,10 +9,6 @@ from branca.element import Element
 import json
 import pyogrio
 import folium
-from folium.map import Marker
-from folium.features import DivIcon
-from branca.element import MacroElement
-from jinja2 import Template
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -504,12 +500,11 @@ def map_folium(data, n_cluster, zoom=4, width=1500, height=400):
     gdf_provinsi['Cluster'] = gdf_provinsi['Cluster'].map(label_mapping).fillna('Tidak ada data').astype(str)
 
     gdf_provinsi['color'] = gdf_provinsi['color'].fillna('lightgrey') # Warna abu-abu untuk kabupaten/kota tanpa data
-    # print(unique_clusters)
 
     # Simplify the geometries in gdf_provinsi, keeping the 'NAME_2' column
     gdf_provinsi_simplified = gdf_provinsi[['NAME_2', 'geometry']].simplify(tolerance=0.01, preserve_topology=True)
 
-    # Convert the simplified GeoSeries to a GeoDataFrame (if necessary, though simplify on subset should return gdf)
+    # Convert the simplified GeoSeries to a GeoDataFrame
     if isinstance(gdf_provinsi_simplified, gpd.GeoSeries):
         gdf_provinsi_simplified = gpd.GeoDataFrame(geometry=gdf_provinsi_simplified, crs=gdf_provinsi.crs)
         gdf_provinsi_simplified['NAME_2'] = gdf_provinsi['NAME_2'] # Re-add NAME_2 if simplify dropped it
@@ -547,18 +542,10 @@ def map_folium(data, n_cluster, zoom=4, width=1500, height=400):
         gj.add_to(fg)
         fg.add_to(m)
 
-    # Define the bounding box (southwest, northeast)
-    # bounds = [[-11, 95], [4, 140]]
-
-    # # Fit the map to the defined bounds
-    # m.fit_bounds(bounds)
     m.add_child(folium.LatLngPopup())
 
     folium.LayerControl(position='bottomleft', collapsed=False).add_to(m)
     folium_static(m, width=width, height=height)
-
-    # bounds = gdf_provinsi_simplified.total_bounds
-    # m.fit_bounds([[bounds[1], bounds[0]], [bounds[3], bounds[2]]])
 
 def graph_comparison(data):
     nama_kolom = data.columns
@@ -881,7 +868,6 @@ def clustering_sample(df):
 
     with cols[1]:
         st.dataframe(dataframe_lama, hide_index=True)
-        
         st.plotly_chart(bar_chart)
 
 def add_cluster_to_df (df, cluster_labels):
@@ -893,14 +879,6 @@ def add_cluster_to_df (df, cluster_labels):
 def show_map(df, cluster_labels, cluster_optimal, zoom=4, width=1500, height=400):
     df = add_cluster_to_df(df, cluster_labels)
     map_folium(df, cluster_optimal, zoom=zoom, width=width, height=height)
-
-# def categorize_df(df, cluster_optimal, nama_kolom_kategori, nama_kolom_cluster):
-#     df = df.rename(columns={'Cluster': f'{nama_kolom_cluster}'})
-#     kategori = generate_cluster_category(cluster_optimal)
-#     label_mapping = {i: label for i, label in enumerate(kategori)}
-#     # st.dataframe(df, hide_index=True)
-#     df[f'{nama_kolom_kategori}'] = df[f'{nama_kolom_cluster}'].map(label_mapping)
-#     return df
 
 def cluster_and_category_result(df, cluster_labels, cluster_optimal, nama_kolom_kategori, nama_kolom_cluster):
     df = add_cluster_to_df(df, cluster_labels)
@@ -929,39 +907,6 @@ def show_n_cluster(df, kategori, metode):
                     marker=dict(colors=colors, line=dict(color='#000000', width=1)))
     fig.update_layout(legend_title='Cluster')
     st.plotly_chart(fig)
-
-# def compare_cluster(df, nama_kolom):
-#     fitur = ['Luas Panen (Hektar)', 'Produksi (Ton)', 'Produktivitas (Kuintal/Ha)']
-#     prefix_fitur = ['Luas Panen 2', 'Produksi 2', 'Produktivitas 2']
-
-#     fig = make_subplots(rows=3, cols=1, subplot_titles=fitur)
-#     n=0
-#     for prefix in prefix_fitur:
-#         n+=1
-#         # Menyimpan kolom yg memiliki nama "Luas Panen 2"
-#         feature_columns = [col for col in df.columns if f'{prefix}' in col]
-
-#         # mneyimpan rata-rata mean berdasarkan golongan cluster
-#         feature_mean = df.groupby(nama_kolom)[feature_columns].mean()
-
-#         # Menyimpan array tahun
-#         tahun = [re.search(r'\d{4}', col).group() for col in df.columns if f'{prefix}' in col]
-#         feature_mean = feature_mean.reset_index().reset_index(drop=True)
-
-#         unique_categories = feature_mean[nama_kolom]
-#         feature_mean = feature_mean.set_index(nama_kolom).transpose()
-#         for category in unique_categories:
-#             st.write(feature_mean[category])
-#             fig.add_trace(go.Bar(x=tahun, y=feature_mean[category], name=category),
-#                           row=n, col=1)
-        
-#         fig.update_layout(
-#             height=900,
-#             barmode='group',
-#             legend_title_text='Cluster',
-#             showlegend=True)
-    
-#     st.plotly_chart(fig)
 
 def compare_cluster(df, nama_kolom, height=900, direction='vertical'):
     fitur = ['Luas Panen (Hektar)', 'Produksi (Ton)', 'Produktivitas (Kuintal/Ha)']
@@ -1050,11 +995,6 @@ def compare_cluster(df, nama_kolom, height=900, direction='vertical'):
         )
     
     st.plotly_chart(fig)
-
-# def change_cluster_label_num(df, nama_kolom_cluster):
-#     mapping = {0:1, 1:2, 2:3, 3:4, 4:5}
-#     df[nama_kolom_cluster] = [mapping[i] for i in df[nama_kolom_cluster]]
-#     return df
 
 def plot_data_cluster(df, label_clusters, metode, pca_components=2):
     # Ensure the DataFrame is in the correct format (only numeric columns)

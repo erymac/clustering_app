@@ -28,12 +28,36 @@ st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap
 query_params = st.query_params
 page = query_params.get("page", "home")  # Default to 'Home' if none
 
+# st.markdown("""
+# <nav class='navbar fixed-top navbar-dark' style='background-color: #984216;'>
+#     <div class='container'>
+#         <span class='nav-title'>Clustering Data Kacang Hijau</span>
+#         <div class='nav-text navbar-nav'>
+#             <ul class='nav justify-content-end '>
+#                 <li class='nav-item'>
+#                     <a class='nav-link' href='/'>Home</a>
+#                 </li>
+#                 <li class='nav-item'>
+#                     <a class='nav-link' href='/analyze'>Analisis Data</a>
+#                 </li>
+#                 <li class='nav-item'>
+#                     <a class='nav-link' href='/about'>Tentang</a>
+#                 </li>
+#                 <li class='nav-item'>
+#                     <a class='nav-link' href='/profile'>Profil</a>
+#                 </li>
+#             </ul>
+#         </div>
+#     </div>
+# </nav>
+# """, unsafe_allow_html=True)
+
 st.markdown("""
-<nav class='navbar fixed-top navbar-dark' style='background-color: #984216;'>
+<nav class='navbar fixed-top navbar-dark' style='background-color: #183a1d;'>
     <div class='container'>
-        <span class='nav-title'>Clustering Data Kacang Hijau</span>
+        <span class='nav-title' style='color: #f0e0b1;'>Clustering Data Kacang Hijau</span>
         <div class='nav-text navbar-nav'>
-            <ul class='nav justify-content-end '>
+            <ul class='nav justify-content-end'>
                 <li class='nav-item'>
                     <a class='nav-link' href='/'>Home</a>
                 </li>
@@ -52,6 +76,20 @@ st.markdown("""
 </nav>
 """, unsafe_allow_html=True)
 
+# Add a minimal hover effect with light underline and subtle pale green
+st.markdown("""
+    <style>
+        .navbar-dark .navbar-nav .nav-link {
+            color: #f0e0b1;  /* Off-white text color */
+            transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
+        }
+        
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: #ff6f61;  /* Bright orange on hover */
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # home ()
 
 #Home Page
@@ -63,6 +101,16 @@ st.markdown('<h1 class="custom-header" style="font-size:48px; align: center; col
 data_path = 'https://bdsp2.pertanian.go.id/bdsp/id/lokasi'
 data_sample = 'data sample\Kacang Hijau.csv'
 
+@st.dialog("Contoh struktur dataset")
+def data_example():
+    st.download_button(
+        label="Contoh Sampel",
+        data=open(f'{data_sample}'),
+        file_name='Sampel Kacang Hijau 2010-2024.csv',
+        use_container_width=True
+    )
+    st.dataframe(open(f'{data_sample}'))
+
 col = st.columns([4,3,1,3,4])
 with col[1]:
     st.link_button(
@@ -72,11 +120,15 @@ with col[1]:
     )
 with col[3]:
     st.download_button(
-        label="Contoh Sampel",
+        label="Contoh Dataset",
         data=open(f'{data_sample}'),
         file_name='Sampel Kacang Hijau 2010-2024.csv',
         use_container_width=True
     )
+# with col[3]:
+#     if st.button("Contoh Dataset"):
+#         data_example()
+
 
 uploaded_file = st.file_uploader("Unggah data dalam bentuk excel")
 if uploaded_file is not None:
@@ -205,7 +257,7 @@ if mulai:
                 st.write("##### Perbandingan Fitur Setiap Cluster")
                 compare_cluster(df_copy, 'Cluster', height=400, direction='horizontal')
 
-                # ANALISIS ALGORITMA CLUSTERING
+                # ANALISIS DATA
                 dataframe_baru = clustering_results_dataframe(df_copy, bestcluster_bkmeans, labels_bkmeans)
 
                 cols = st.columns(2, gap="small", vertical_alignment="top")
@@ -290,6 +342,32 @@ if mulai:
                     # PERBANDINGAN FITUR SETIAP CLUSTER
                     st.write("##### Perbandingan Fitur Setiap Cluster")
                     compare_cluster(df_copy, 'Cluster', height=400, direction='horizontal')
+
+                    # ANALISIS DATA
+                    dataframe_baru = clustering_results_dataframe(df_copy, bestcluster_ahc, labels_ahc)
+
+                    cols = st.columns(2, gap="small", vertical_alignment="top")
+                    with cols[0]:
+                        pie_df = dataframe_baru.groupby('Provinsi')['Produksi'].sum().reset_index()
+                        prod_pct = []
+                        unique_provinsi = np.unique(pie_df['Provinsi'])
+                        for i in range(len(unique_provinsi)):
+                            temp = (pie_df.loc[i, 'Produksi'] / pie_df['Produksi'].sum()) * 100
+                            prod_pct.append(round(temp, 2))
+
+                        pie_df['prod_pct'] = prod_pct
+                        pie_df = pie_df[pie_df['prod_pct'] > 2].reset_index()
+
+                        labels = pie_df['Provinsi']
+                        values = pie_df['Produksi']
+
+                        fig = go.Figure(data=[go.Pie(labels=labels, values=values, textinfo='label+percent', textfont_size=10)])
+                        fig.update_layout(title_text="Kontribusi Produksi Kacang Hijau 2010 - 2024")
+                        st.plotly_chart(fig)
+
+                    with cols[1]:
+                        bar_chart = show_prod_dan_lp(df_copy.drop(['Luas Panen', 'Produksi', 'Produktivitas'], axis=1))
+                        st.plotly_chart(bar_chart)
 
                 # JIKA LINKAGE BELUM TERPILIH KELUAR WARNING
                 else:

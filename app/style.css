@@ -40,7 +40,7 @@ span {
 }
 
 .nav-text {
-    background-color: #984216;
+    /* background-color: #984216; */
     color: white;
     padding: 22px 20px;
     border-radius: 6px;
@@ -61,22 +61,24 @@ span {
 .nav-link {
     text-decoration: none;
     color: white;
+    text-decoration: none !important;  /* Remove underline */
 }
 .nav-link:hover {
     text-decoration: underline;
-    color: #F4F0E5;
+    /* color: #F4F0E5; */
+    text-decoration: none !important;  /* Remove underline */
 }
 .nav-text a {
     font-size: 17px;
-    color: #F4F0E5;
+    color: #efe1dc;
     text-decoration: none;
     padding: 0 0 0 60px;
 }
 
-div.stButton > button:first-child {
+/* div.stButton > button:first-child {
     background-color: #8D957E;
-    color: white;           /* Button text color */
-    border: none;               /* Optional: remove default border */
+    color: white;
+    border: none;
     padding: 7px 22px;
     border-radius: 39px;
     min-width: 130px;
@@ -85,12 +87,78 @@ div.stButton > button:first-child {
 }
 
 div.stButton > button:hover {
-    background-color: #6B705C;  /* Darker on hover */
+    background-color: #6B705C;
     color: white;
+} */
+
+/* div.stButton > button:first-child {
+    background-color: #d04d57;
+    color: #ffffff;
+    border: 2px solid #d04d57;
+    padding: 10px 30px;
+    border-radius: 50px;
+    min-width: 150px;
+    height: 45px;
+    text-align: center;
+    font-size: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+div.stButton > button:first-child:hover {
+    border: 2px solid #F47117;
+    color: #ffffff;
+    background-color: #62a77d;
+    cursor: pointer;
+    transform: translateY(-2px);
+} */
+
+/* div.stButton > button:first-child {
+    color: #ffffff;
+    background-color: #73b68c;
+    border: 2px solid #62a77d;
+    padding: 10px 30px;
+    border-radius: 50px;
+    min-width: 150px;
+    height: 45px;
+    text-align: center;
+    font-size: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+div.stButton > button:first-child:hover {
+    border: 2px solid #F47117;
+    color: #F47117;
+    background-color: #82c99d;
+    cursor: pointer;
+    transform: translateY(-2px);
+} */
+
+div.stButton > button:first-child {
+    background-color: #CC512D;
+    color: #f0e0b1;
+    border: 2px solid #CC512D;
+    padding: 10px 30px;
+    border-radius: 50px;
+    min-width: 150px;
+    height: 45px;
+    text-align: center;
+    font-size: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+div.stButton > button:first-child:hover {
+    border: 2px solid #F47117;
+    color: #f0e0b1;
+    background-color: #62a77d;
+    cursor: pointer;
+    transform: translateY(-2px);
 }
 
 div.stAlertContainer {
-    background-color: #E3D6C5;
+    background-color: #efe1dc;
     border-radius: 5px;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
