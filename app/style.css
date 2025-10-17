@@ -39,6 +39,10 @@ span {
     text-align: center;
 }
 
+navbar {
+    height: 500;
+}
+
 .nav-text {
     /* background-color: #984216; */
     color: white;

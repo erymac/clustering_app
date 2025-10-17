@@ -1,39 +1,45 @@
 from sklearn.cluster import BisectingKMeans, AgglomerativeClustering
-from yellowbrick.cluster import SilhouetteVisualizer
-from yellowbrick.datasets import load_nfl
-from sklearn.datasets import load_iris
 from sklearn.metrics import silhouette_samples, silhouette_score, davies_bouldin_score
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from streamlit_folium import st_folium, folium_static
-from branca.element import Element
-import json
-import pyogrio
 import folium
-import seaborn as sns
-import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import time
-from datetime import date
-from io import StringIO
-import os
 import plotly.express as px
 from plotly.subplots import make_subplots
 from sklearn.decomposition import PCA
 import plotly.graph_objects as go
 import re
 import geopandas as gpd
-
+import datetime
 import streamlit as st
 import pandas as pd
 import numpy as np
 
-def validate_columns_and_data(data, required_columns):
-    # Cek jika kolom ditemukan (e.g., 'Luas Panen', 'Produksi', etc.)
+COLOR_MAP = {
+    0: "#D13035",
+    1: "#F7D756",
+    2: '#4BB35C',
+    3: "#6CD9D5",
+    4: '#1965B0'
+}
+
+def validate_columns_and_data(data):
+    required_columns = ['Lokasi', 'Luas Panen ', 'Produksi ', 'Produktivitas ']
+    # Cek jika kolom ditemukan ('Luas Panen', 'Produksi', etc.)
+    column_rename_map = {
+        'Luas Panen ': 'Luas Panen [tahun]',
+        'Produksi ': 'Produksi [tahun]',
+        'Produktivitas ': 'Produktivitas [tahun]'
+    }
+    
     missing_columns = []
     for col in required_columns:
         matching_columns = [c for c in data.columns if c.startswith(col)]
         if not matching_columns:
-            missing_columns.append(col)
+            # missing_columns.append(col)
+            mapped_name = column_rename_map.get(col, col)  # Use the mapped name if available
+            missing_columns.append(mapped_name)
     
     if missing_columns:
         raise ValueError(f"Kolom-kolom berikut tidak ditemukan: {', '.join(missing_columns)}")
@@ -48,19 +54,9 @@ def validate_columns_and_data(data, required_columns):
             # Check if the data in the column is numeric
             if not pd.to_numeric(data[matching_col], errors='coerce').notna().all():
                 raise ValueError(f"Kolom '{matching_col}' mengandung nilai non-numerik. Harap perbaiki data.")
-    
     return True  # If all validations pass, return True
 
 def preprocess_data(data):
-    # numeric_columns = [col for col in data.columns if col != 'Lokasi']
-    # for col in numeric_columns:
-    #     # If the column contains non-numeric values, set them as NaN
-    #     data[col] = pd.to_numeric(data[col], errors='coerce')
-        
-    #     # If any NaN values were created (indicating invalid data), raise an error
-    #     if data[col].isna().any():
-    #         raise ValueError(f"Kolom '{col}' berisi nilai non-numerik. Silakan perbaiki terlebih dahulu sebelum melanjutkan.")
-        
     data = data.replace(0, np.nan)
 
     column_null = data.isna().sum()/len(data) * 100
@@ -118,12 +114,15 @@ def handle_null(data):
     return data
 
 def normalize(data):
+    kolom_lokasi = data['Lokasi']
     scaler = MinMaxScaler()
+    data = data.drop(columns=['Lokasi'], axis=1)
     scaled_data = scaler.fit_transform(data.values)
 
     data_scaled = pd.DataFrame(scaled_data, columns=data.columns, index=data.index) # Mengubah hasil scaled_data (array) kembali menjadi DataFrame
-    data.update(data_scaled) # Memperbarui DataFrame asli
-    return data
+    # data.update(data_scaled) # Memperbarui DataFrame asli
+    data_scaled['Lokasi'] = kolom_lokasi
+    return data_scaled
 
 def BKMeans(data, n_cluster): # Fungsi metode Bisecting K-Means
     silhouette_temp = 0
@@ -235,16 +234,9 @@ def AHC(data, n_cluster, linkage): # Fungsi metode AHC mengembalikan skor silhou
 
         if silhouette_avg_avg > silhouette_temp:
             silhouette_temp = silhouette_avg_avg
-            waktu_temp = waktu
             num_cluster = i
             labels = cluster_labels
-            clusterer = ahc_clusterer
             db_index_temp = dbi_avg
-
-    #   if dbi_avg < db_index_temp:
-        #     db_index_temp = dbi_avg
-        #     db_waktu_temp = waktu
-        #     db_num_cluster = i
 
         avg_silhouette_total = avg_silhouette_total + silhouette_avg_avg
     
@@ -342,7 +334,7 @@ def visualize_data(data, cluster_labels, metode):
                      )
     fig.update_traces(marker=dict(size=7, line=dict(width=1, color='black')))
     fig.update_layout(
-        title=dict(text=f'Ruang Cluster Data dengan {metode}'),
+        title=dict(text=f'Ruang Cluster dengan {metode}'),
         legend_title_text='Cluster'
     )
     fig.update_xaxes(title='Ruang Fitur 1', showticklabels=False)
@@ -350,6 +342,7 @@ def visualize_data(data, cluster_labels, metode):
     st.plotly_chart(fig, theme=None, use_container_width=False)
 
 def visualize_silhouette(data, cluster_labels, n_clusters, silhouette_avg, metode):
+    # st.write(f'##### Visualisasi Silhouette {metode} {n_clusters} Cluster')
     silhouette_values = silhouette_samples(data, cluster_labels)
 
     fig = go.Figure()
@@ -363,14 +356,16 @@ def visualize_silhouette(data, cluster_labels, n_clusters, silhouette_avg, metod
         size_cluster_i = len(ith_vals)
         y_upper = y_lower + size_cluster_i
 
-        color = cm.nipy_spectral(float(i) / n_clusters)
-        color_rgba = f'rgba({int(color[3]*255)}, {int(color[1]*255)}, {int(color[2]*255)}, 0.7)'
+        # color = cm.nipy_spectral(float(i) / n_clusters)
+        # color_rgba = f'rgba({int(color[3]*255)}, {int(color[1]*255)}, {int(color[2]*255)}, 0.7)'
+        # Use the color from COLOR_MAP (using cluster label as key)
+        color = COLOR_MAP.get(i, '#808080')  # Default to gray if not found in COLOR_MAP
 
         fig.add_trace(go.Bar(
             x=ith_vals,
             y=np.arange(y_lower, y_upper),
             orientation='h',
-            marker=dict(color=color_rgba),
+            marker=dict(color=color),
             showlegend=True,
             name=f'Cluster {i} | {size_cluster_i}'
         ))
@@ -405,14 +400,15 @@ def visualize_silhouette(data, cluster_labels, n_clusters, silhouette_avg, metod
     ))
 
     fig.update_layout(
-        title=f'Silhouette Plot Metode {metode} dengan {n_clusters} Cluster',
+        title=f'Visualisasi Silhouette {metode} {n_clusters} Cluster',
+        title_font_size=20,
         xaxis=dict(title='Koefisien Silhouette', range=[-0.2, 1]),
         yaxis=dict(title='Label Cluster', showticklabels=False),
         # height=450,
         # margin=dict(l=50, r=50, t=80, b=50)
     )
 
-    st.plotly_chart(fig, theme=None, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)
 
 def visualize_cluster(data, labels, n_cluster):
     data['Cluster'] = labels # Menggabungkan label ke Klaster ke dataset
@@ -481,7 +477,7 @@ def penyesuaian(data):
         "Kota Jakarta Selatan": "Jakarta Selatan", "Kota Jakarta Timur": "Jakarta Timur", "Kota Jakarta Utara": "Jakarta Utara",
         "Kota Jambi": "Jambi", "Kota Langsa": "Langsa", "Kota Lhokseumawe": "Lhokseumawe", "Kota Subulussalam": "Subulussalam",
         "Kota Sabang": "Sabang", ": Lembata": "Lembata", "Kota Sungai Penuh": "Sungai Penuh", "Kota Tarakan": "Tarakan", "Kota Ternate": "Ternate",
-        "Kota Tidore Kepulauan": "Tidore Kepulauan", "Kota Tual": "Tual", "Banjar": "Kabupaten Banjar"
+        "Kota Tidore Kepulauan": "Tidore Kepulauan", "Kota Tual": "Tual", "Banjar": "Kabupaten Banjar", "Yapen Waropen": "Kepulauan Yapen"
         }
     
     data['Lokasi'] = data['Lokasi'].replace(kamus_penyesuaian)
@@ -499,7 +495,11 @@ def generate_cluster_category(n_cluster):
 
 def merge_gdf(data):
     gdf = gpd.read_file('gadm_IDN/gadm41_IDN_2.shp') # Membuat shapefile Indonesia
-    data_clustering = data[['Lokasi', 'Cluster']].rename(columns={'Lokasi': 'provinsi'}) # Ganti 'Lokasi' menjadi 'provinsi' untuk menyesuaikan
+    # data_clustering = data[['Lokasi', 'Cluster']].rename(columns={'Lokasi': 'provinsi'}) # Ganti 'Lokasi' menjadi 'provinsi' untuk menyesuaikan
+    if 'Cluster' in data.columns:
+        data_clustering = data[['Lokasi', 'Cluster']].rename(columns={'Lokasi': 'provinsi'})
+    else:
+        data_clustering = data[['Lokasi']].rename(columns={'Lokasi': 'provinsi'})
     gdf_provinsi = gdf.dissolve(by='NAME_2').reset_index() # Menggabungkan data kabupaten ke provinsi
     gdf_provinsi = gdf_provinsi.merge(data_clustering, left_on='NAME_2', right_on='provinsi', how='left') # Menggabungkan dengan data clustering
     gdf_provinsi['provinsi'] = gdf_provinsi['NAME_1']
@@ -509,18 +509,32 @@ def merge_gdf(data):
 def map_folium(data, n_cluster, zoom=4, width=1500, height=400):
     gdf_provinsi = merge_gdf(data)
 
-    color_map = {
-        0: '#BE2A3E',
-        1: '#F88F4D',
-        2: '#F4D166',
-        3: "#90B960",
-        4: '#22763F'
-    }
+    # color_map = {
+    #     0: '#BE2A3E',
+    #     1: '#FF9800',
+    #     2: '#F4D166',
+    #     3: "#90B960",
+    #     4: '#22763F'
+    # }
+    # color_map = {
+    #     0: '#DC050C',
+    #     1: '#F7F056',
+    #     2: '#4BB35C',
+    #     3: "#7BAFDE",
+    #     4: '#1965B0'
+    # }
+    # color_map = {
+    #     0: '#D7191C',
+    #     1: '#FDAE61',
+    #     2: '#F7F056',
+    #     3: "#A6D96A",
+    #     4: '#2B83BA'
+    # }
 
     gdf_provinsi['Cluster'] = pd.to_numeric(gdf_provinsi['Cluster'], errors='coerce')
     cluster_labels = generate_cluster_category(n_cluster)
 
-    gdf_provinsi['color'] = gdf_provinsi['Cluster'].map(color_map)
+    gdf_provinsi['color'] = gdf_provinsi['Cluster'].map(COLOR_MAP)
 
     label_mapping = {i: label for i, label in enumerate(cluster_labels)}
 
@@ -566,9 +580,9 @@ def map_folium(data, n_cluster, zoom=4, width=1500, height=400):
             gdf_cluster,
             style_function=lambda feature, color=cluster_color: {
                 'fillColor': color,
-                'color': 'black',
-                'weight': 0.5,
-                'fillOpacity': 0.7,
+                'color': "#484848",
+                'weight': 0.3,
+                'fillOpacity': 0.8,
             },
             tooltip=folium.GeoJsonTooltip(fields=['Cluster', 'Lokasi', 'Provinsi']),
         )
@@ -579,6 +593,13 @@ def map_folium(data, n_cluster, zoom=4, width=1500, height=400):
 
     folium.LayerControl(position='bottomleft', collapsed=False).add_to(m)
     folium_static(m, width=width, height=height)
+
+def show_map_explanation():
+    with st.expander("Lihat penjelasan"):
+        st.write('''
+            Peta ini menggambarkan wilayah di Indonesia yang sudah dibagi berdasarkan jumlah cluster yang Anda input.
+            Label tinggi / rendah pada peta adalah berdasarkan tingkat produksi.
+        ''')
 
 def graph_comparison(data):
     nama_kolom = data.columns
@@ -606,161 +627,93 @@ def graph_comparison(data):
 
     fig.show()
 
-def plot_panen_trends(df, default_metric="Produksi", default_order="Terbesar ▶️", default_n_locations=5):
-    fitur = ['Luas', 'Produksi', 'Produktivitas']
-    
-    # Add search functionality
+def pie_kontribusi(df, min_tahun, max_tahun):
+    pie_df = df.groupby('Provinsi')['Produksi'].sum().reset_index()
+    prod_pct = []
+    unique_provinsi = np.unique(pie_df['Provinsi'])
+    for i in range(len(unique_provinsi)):
+        temp = (pie_df.loc[i, 'Produksi'] / pie_df['Produksi'].sum()) * 100
+        prod_pct.append(round(temp, 2))
+
+    pie_df['prod_pct'] = prod_pct
+    pie_df = pie_df[pie_df['prod_pct'] > 2].reset_index()
+
+    labels = pie_df['Provinsi']
+    values = pie_df['Produksi']
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values, textinfo='label+percent', textfont_size=10)])
+    # fig.update_layout(title_text="Kontribusi Produksi Kacang Hijau 2010 - 2024")
+    fig.update_layout(
+        title_text=f"Kontribusi Produksi Kacang Hijau {min_tahun}-{max_tahun}",
+        title_font_size=20
+    )
+    st.plotly_chart(fig)
+
+def plot_panen_trends(df, default_metric="Produksi", default_order="Terbesar", default_n_locations=5):
+    fitur = ['Luas Panen', 'Produksi', 'Produktivitas']
     with st.container():
-        search_terms = st.text_input(
-            "🔍 Bandingkan Lokasi (pisahkan dengan koma):",
-            placeholder="Contoh: Aceh, Kalimantan, Jawa Barat",
-            help="Masukkan nama lokasi yang ingin dibandingkan trennya",
-            key="trend_search"
-        )
-    
-    with st.container():
-        col1, col2, col3 = st.columns(3)
-        
+        col1, col2, col3 = st.columns(3, gap='medium')
         with col1:
-            metric = st.selectbox(
-                "Pilih Fitur:",
+            indikator = st.selectbox(
+                "Pilih indikator :",
                 options=fitur,
                 index=fitur.index(default_metric),
-                key="trend_metric"
+                key="indikator"
             )
-            
         with col2:
             # Disable radio button when searching
             sort_order = st.radio(
-                "Urutan:",
-                options=["Terbesar ▶️", "Terkecil ◀️"],
-                index=0 if default_order == "Terbesar ▶️" else 1,
+                "Urutan :",
+                options=["Terbesar", "Terkecil"],
+                index=0 if default_order == "Terbesar" else 1,
                 horizontal=True,
-                key="sort_order",
-                disabled=bool(search_terms)  # Disabled when searching
+                key="sort_order"
             )
-            
         with col3:
             max_locations = len(df)
             n_locations = st.slider(
                 "Jumlah Lokasi:",
                 min_value=1,
-                max_value=min(20, max_locations),
+                max_value=min(13, max_locations),
                 value=default_n_locations,
-                key="num_locations",
-                disabled=bool(search_terms)  # Disabled when searching
+                key="num_locations"
             )
 
-    # Prepare data
-    year_pattern = r'_(\d{4})$'
+    # tahun = [re.search(r'\d{4}', col).group() for col in df.columns if 'Produksi' in col]
+    year_pattern = r' (\d{4})$'
     metric_cols = [col for col in df.columns 
-                if metric in col and re.search(year_pattern, col)]
+                if indikator in col and re.search(year_pattern, col)]
     
     if not metric_cols:
-        st.warning(f"⚠️ Data {metric} tidak ditemukan")
+        st.warning(f"Indikator {indikator} tidak ditemukan")
         return
     
-    years = sorted([int(re.search(year_pattern, col).group(1)) for col in metric_cols])
+    tahun = sorted([int(re.search(year_pattern, col).group(1)) for col in metric_cols])
     
-    # Filter data based on search terms if provided
-    if search_terms:
-        search_list = [term.strip() for term in search_terms.split(',') if term.strip()]
-        
-        # Check which locations exist and which don't
-        found_locations = []
-        missing_locations = []
-        
-        for loc in search_list:
-            matches = df[df['Lokasi'].str.contains(loc, case=False, na=False)]
-            if not matches.empty:
-                found_locations.extend(matches['Lokasi'].unique().tolist())
-            else:
-                missing_locations.append(loc)
-        
-        # Remove duplicates while preserving order
-        seen = set()
-        found_locations = [x for x in found_locations if not (x in seen or seen.add(x))]
-        
-        # Show warning for missing locations
-        if missing_locations:
-            st.warning(f"⚠️ Lokasi berikut tidak ditemukan: {', '.join(missing_locations)}")
-        
-        if not found_locations:
-            st.error("❌ Tidak ada lokasi yang ditemukan dari pencarian Anda")
-            return
-            
-        df_trend = df[df['Lokasi'].isin(found_locations)]
-        
-        # In search mode, we don't sort by average but keep original order of search terms
-        df_trend['Match_Order'] = df_trend['Lokasi'].apply(
-            lambda x: next((i for i, loc in enumerate(search_list) if loc.lower() in x.lower()), len(search_list))
-        )
-        df_trend = df_trend.sort_values('Match_Order')
-    else:
-        df_trend = df.copy()
-        df_trend['Average'] = df_trend[metric_cols].mean(axis=1)
-        ascending = sort_order.startswith("Terkecil")
-        df_trend = df_trend.sort_values('Average', ascending=ascending).head(n_locations)
+    df_tren = df.copy()
 
-    # Create plot
-    fig, ax = plt.subplots(figsize=(10, 5 + len(df_trend)*0.3))
-    palette = sns.color_palette("tab20", len(df_trend))
-    
-    for i, (_, row) in enumerate(df_trend.iterrows()):
-        ax.plot(
-            years,
-            row[metric_cols].values,
-            marker='o',
-            linestyle='-',
-            color=palette[i % len(palette)],
-            label=f"{row['Lokasi']} ({row['Kategori']})",
-            linewidth=2,
-            markersize=6
-        )
-    
-    # Style plot
-    units = {"Luas": "Ha", "Produksi": "Ton", "Produktivitas": "kg/Ha"}.get(metric, "")
-    
-    # Custom title based on mode
-    if search_terms:
-        display_locs = [loc for loc in search_list if any(loc.lower() in found.lower() for found in found_locations)]
-        title = f"TREN PERBANDINGAN: {', '.join(display_locs).upper()}\n"
-        title += f"{metric} ({min(years)}-{max(years)})"
-    else:
-        title = f"{metric} Tren ({min(years)}-{max(years)})\n"
-        title += f"{n_locations} {'Top' if not ascending else 'Bottom'} Lokasi"
-    
-    ax.set_title(title, fontsize=12, fontweight='bold')
-    ax.set_xlabel("Tahun")
-    ax.set_ylabel(f"{metric} ({units})")
-    ax.set_xticks(years)
-    ax.set_xticklabels(years, rotation=45)
-    ax.grid(True, linestyle=':', alpha=0.5)
-    
-    # Improved legend placement
-    ax.legend(
-        bbox_to_anchor=(1.05, 1),
-        loc='upper left',
-        fontsize=8,
-        title="Lokasi",
-        title_fontsize=9
+    sort_bool = sort_order.startswith("Terkecil")
+    df_tren = df.copy().sort_values(indikator, ascending=sort_bool).head(n_locations)
+
+    df_tren = df_tren.reset_index().drop('index', axis=1)
+
+    satuan = {"Luas Panen": "Ha", "Produksi": "Ton", "Produktivitas": "kg/Ha"}.get(indikator, "")
+        
+    fig = go.Figure()
+    for i in range(len(df_tren)):
+        city_names = df_tren['Lokasi'].iloc[i]
+        feature_values = df_tren.loc[i, df_tren.columns.str.startswith(f'{indikator} ')]
+
+        fig.add_trace(go.Scatter(x=tahun, y=feature_values, mode='lines+markers', name=city_names))
+
+    fig.update_layout(
+        title=f'{indikator} {sort_order} per Kabupaten / Kota',
+        xaxis_title='Tahun',
+        yaxis_title=f'{indikator} ({satuan})',
+        hovermode='x unified'
     )
-    
-    plt.tight_layout()
-    
-    if fig:
-        img_buffer = get_fig_buffer(fig)
-        
-        filename = f"Tren_{metric}_{min(years)}-{max(years)}.png"
-        
-        # Create download button
-        st.download_button(
-            label="🖼️ Download PNG",
-            data=img_buffer,
-            file_name=filename,
-            mime="image/png",
-        )
-    st.pyplot(fig)
+
+    st.plotly_chart(fig, theme=None)
 
 def avg_features(dataframe):
     kolom_lp = dataframe.filter(regex='^Luas Panen').columns
@@ -776,8 +729,6 @@ def avg_features(dataframe):
 # Menampilkan hasil clustering dgn k optimal berisi provinsi, lp, prod, pty, dan kategori
 def clustering_results_dataframe(dataframe, bestcluster, cluster_labels):
     dataframe_baru = avg_features(dataframe)
-    # dataframe_baru['Cluster'] = cluster_labels
-    # st.dataframe(dataframe_baru, hide_index=True)
     cluster_category = generate_cluster_category(bestcluster)
 
     label_mapping = {i: label for i, label in enumerate(cluster_category)}
@@ -805,6 +756,27 @@ def clustering_results_dataframe(dataframe, bestcluster, cluster_labels):
 
     # st.dataframe(dataframe_baru, hide_index=True)
     return dataframe_baru
+
+def add_provinsi_to_df(dataframe):
+    gdf_provinsi = merge_gdf(dataframe)
+    # gdf_provinsi['Cluster'] = pd.to_numeric(gdf_provinsi['Cluster'], errors='coerce')
+
+    # unique_clusters = gdf_provinsi[['Cluster']].drop_duplicates()
+    # unique_clusters = unique_clusters.sort_values(by='Cluster')
+    # unique_clusters['Cluster'] = unique_clusters['Cluster'].fillna('Tidak ada data')
+
+    # Replace cluster numbers with labels
+    # gdf_provinsi['Cluster'] = gdf_provinsi['Cluster'].fillna('Tidak ada data').astype(str)
+    gdf_provinsi.rename(columns={'NAME_2': 'Lokasi', 'provinsi': 'Provinsi'}, inplace=True)
+
+    dataframe = dataframe.merge(gdf_provinsi[['Provinsi', 'Lokasi']], on='Lokasi', how='inner')
+
+    # dataframe.loc[dataframe['Lokasi'] == 'Banjar', 'Provinsi'] = 'Kalimantan Selatan'
+    # dataframe.loc[dataframe['Lokasi'] == 'Pesisir Barat', 'Provinsi'] = 'Lampung'
+    # dataframe.loc[dataframe['Lokasi'] == 'Buton Tengah', 'Provinsi'] = 'Sulawesi Tenggara'
+    # dataframe.loc[dataframe['Lokasi'] == 'Kota Banjar', 'Provinsi'] = 'Jawa Barat'
+
+    return dataframe
 
 def show_prod_dan_lp(df):
     luas = df.loc[:, df.columns.str.startswith('Luas Panen')].describe()
@@ -844,15 +816,16 @@ def evaluate(cluster_optimal, waktu, silhouette, dbi, cluster_option):
     col1, col2 = st.columns(2)
     with col1:
         if cluster_option == "Rentang cluster":
-            st.metric(label=f"Cluster Optimal", value=f"{cluster_optimal}")
+            st.metric(label=f"Cluster Optimal", value=f"{cluster_optimal}", help='Data dicluster berdasarkan Silhouette tertinggi dan Davies-Bouldin Index terendah.')
         else:
-            st.metric(label=f"Jumlah Cluster", value=f"{cluster_optimal}")
+            st.metric(label=f"Jumlah Cluster", value=f"{cluster_optimal}", help='Berapa banyak cluster data dibagi.')
         st.write("")
-        st.metric(label="Waktu Komputasi", value=f"{round(waktu['Waktu Komputasi (detik)'].mean(), 4)} detik")
+        st.metric(label="Waktu Komputasi", value=f"{round(waktu['Waktu Komputasi (detik)'].mean(), 4)} detik", help='Rata-rata waktu yang dibutuhkan untuk melakukan proses clustering.')
     with col2:
-        st.metric(label="Silhouette Score", value=f"{silhouette}")
+        st.metric(label="Silhouette Score", value=f"{silhouette}", help='Nilai Silhouette Score berkisar antara -1 hingga 1. Nilai yang lebih tinggi menunjukkan bahwa objek lebih cocok dengan cluster mereka sendiri daripada dengan cluster tetangga.')
         st.write("")
-        st.metric(label="Davies-Bouldin Index", value=f"{dbi}")
+        st.metric(label="Davies-Bouldin Index", value=f"{dbi}", help='Nilai Davies-Bouldin Index (DBI) yang lebih rendah menunjukkan bahwa cluster terpisah dengan baik satu sama lain dan lebih kompak.')
+    st.write("")
 
 def clustering_sample(df):
     df = columns_to_drop(df)
@@ -929,12 +902,13 @@ def group_df_by_cluster (df, kategori):
     return cluster
 
 def show_n_cluster(df, kategori, metode):
-    # cluster = group_df_by_cluster (df, kategori)
     cluster = df.groupby(kategori).size().reset_index(name='Jumlah')
     cluster.columns = ['Cluster', 'Jumlah']
 
     # colors = ['gold', 'darkorange', 'mediumturquoise', 'crimson', 'lightgreen']
-    colors = ['#BE2A3E', '#F88F4D', '#F4D166', "#90B960", '#22763F']
+    # colors = ['#BE2A3E', '#F88F4D', '#F4D166', "#90B960", '#22763F']
+    # colors = ["#D13035", "#F7D756", '#4BB35C', "#6CD9D5", '#1965B0']
+    colors = cluster['Cluster'].map(COLOR_MAP).fillna('#808080').tolist()
 
     fig = px.pie(cluster, values='Jumlah', names='Cluster', title=f'Jumlah Anggota Cluster {metode}')
     fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=17,
@@ -947,13 +921,13 @@ def compare_cluster(df, nama_kolom, height=900, direction='vertical'):
     fitur = ['Luas Panen (Hektar)', 'Produksi (Ton)', 'Produktivitas (Kuintal/Ha)']
     prefix_fitur = ['Luas Panen 2', 'Produksi 2', 'Produktivitas 2']
 
-    cluster_colors = {
-        0: '#BE2A3E',
-        1: '#F88F4D',
-        2: '#F4D166',
-        3: "#90B960",
-        4: '#22763F'
-    }
+    # cluster_colors = {
+    #     0: '#BE2A3E',
+    #     1: '#F88F4D',
+    #     2: '#F4D166',
+    #     3: "#90B960",
+    #     4: '#22763F'
+    # }
 
     if direction == 'vertical':
         rows = 3
@@ -984,7 +958,7 @@ def compare_cluster(df, nama_kolom, height=900, direction='vertical'):
         unique_categories = feature_mean[nama_kolom]
         feature_mean = feature_mean.set_index(nama_kolom).transpose()
         for category in unique_categories:
-            color = cluster_colors[category]
+            color = COLOR_MAP[category]
             if direction == 'vertical':
                 fig.add_trace(go.Scatter(
                     x=tahun, 
@@ -1052,29 +1026,19 @@ def plot_data_cluster(df, label_clusters, metode, pca_components=2):
     df_pca = df_pca.sort_values(by='Cluster')
 
     # Define the new color map
-    scatter_color = {
-        '0': '#BE2A3E',
-        '1': '#F88F4D',
-        '2': '#F4D166',
-        '3': "#90B960",
-        '4': '#22763F'
-    }
-
-    # fig = px.scatter(df_pca, x='PC1', y='PC2', color='Cluster',
-    #                  labels={'PC1': 'x', 'PC2': 'y'},
-    #                  color_discrete_map=scatter_color, height=400,
-    #                  title=f"Ruang Fitur Cluster dengan {metode}"
-    #                 )
-
-    # # Adjust opacity and size of the markers (dots)
-    # fig.update_traces(marker=dict(opacity=0.6, size=10))  # 0.6 means 60% opacity (more transparent)
-    # fig.update_layout(title_font_size=20)
+    # scatter_color = {
+    #     '0': '#BE2A3E',
+    #     '1': '#F88F4D',
+    #     '2': '#F4D166',
+    #     '3': "#90B960",
+    #     '4': '#22763F'
+    # }
+    color_map_str = {str(k): v for k, v in COLOR_MAP.items()}
 
     # # Show the figure
-    # st.plotly_chart(fig)
     fig = px.scatter(df_pca, x='PC1', y='PC2', color='Cluster',
                     labels={'PC1': 'x', 'PC2': 'y'},
-                    color_discrete_map=scatter_color, height=400,
+                    color_discrete_map=color_map_str, height=400,
                     title=f"Ruang Fitur Cluster dengan {metode}"
                     )
 
@@ -1096,7 +1060,109 @@ def plot_data_cluster(df, label_clusters, metode, pca_components=2):
         )
     )
 
-    # Display the figure
     st.plotly_chart(fig)
 
+def heatmap_corr(df):
+    thecorr = df.corr().round(3)
+    text_labels = thecorr.values.astype(str)
 
+    heat = go.Heatmap(
+        z=thecorr,
+        x=thecorr.columns.values,
+        y=thecorr.columns.values,
+        zmin=-0.25,  # Sets the lower bound of the color domain
+        zmax=1,
+        xgap=1,  # Sets the horizontal gap (in pixels) between bricks
+        ygap=1,
+        colorscale='orrd',
+        text=text_labels,
+        texttemplate="%{text}"
+    )
+
+    layout = go.Layout(
+        title_text='Matriks Korelasi Fitur Data Hasil Panen Kacang Hijau',
+        width=600,
+        height=500,
+        yaxis_autorange='reversed',
+        xaxis=dict(
+            tickfont=dict(size=16)
+        ),
+        yaxis=dict(
+            tickfont=dict(size=16)
+        ),
+        margin=dict(t=50, b=50, l=50, r=50)
+    )
+
+    fig = go.Figure(data=[heat], layout=layout)
+    fig.update_layout(
+        title_font_size=20,
+        font=dict(
+            family="Calibri, monospace",
+            size=18
+        )
+    )
+
+    # Render the figure in Streamlit
+    st.plotly_chart(fig, use_container_width=True)
+
+def proses_clustering(df, metode, cluster_labels, cluster_optimal, cluster_option,
+                      df_metode, dfwaktu, silhouette_df, dbi_df):
+    df['Cluster'] = cluster_labels
+    df = sort_cluster(df)
+    
+    cluster_category = generate_cluster_category(cluster_optimal) # beri kategori string
+    label_mapping = {i: label for i, label in enumerate(cluster_category)}
+    df['Kategori'] = df['Cluster'].map(label_mapping)
+
+    df = avg_features(df) # rata-rata fitur per lokasi
+
+    # ANALISIS ALGORITMA CLUSTERING
+    if cluster_option == "Jumlah cluster":
+        subcol = st.columns([13,13], gap="medium", vertical_alignment='top', border=True)
+        with subcol[0]:
+            st.write(f"#### {metode}")
+            st.write("")
+            evaluate(cluster_optimal, dfwaktu, silhouette_df, dbi_df, cluster_option)
+        
+        with subcol[1]:
+            df_array = df.drop(['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Cluster', 'Kategori'], axis=1).values
+            visualize_silhouette(df_array, df['Cluster'], cluster_optimal, silhouette_df, metode)
+        
+    if cluster_option == "Rentang cluster":
+        st.write(f"### {metode}")
+        evaluate(cluster_optimal, dfwaktu, silhouette_df, dbi_df, cluster_option)
+        subcol = st.columns([13,13], gap="medium", vertical_alignment='top', border=True)
+        with subcol[0]:
+            st.write("##### Hasil Silhouette dan Davies-Bouldin Index")
+            fig_evaluate(df_metode, metode)
+        with subcol[1]:
+            df_array = df.drop(['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Cluster', 'Kategori'], axis=1).values
+            visualize_silhouette(df_array, df['Cluster'], cluster_optimal, silhouette_df, metode)
+
+    # PERBANDINGAN FITUR SETIAP CLUSTER
+    st.write("##### Perbandingan Fitur Setiap Cluster")
+    compare_cluster(df, 'Cluster', height=400, direction='horizontal')
+    
+    st.write("##### Tabel Data Hasil Cluster")
+    st.dataframe(df[['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Cluster', 'Kategori']], hide_index=True)
+    
+    st.write("##### Pemetaan Tingkat Produksi Kacang Hijau")
+    show_map(df, cluster_labels, cluster_optimal, zoom=5, height=500)
+    show_map_explanation()
+
+    # DETAIL HASIL CLUSTER
+    subcol = st.columns(2, gap="medium", border=True)
+    with subcol[0]:
+        plot_data_cluster(df, df['Cluster'], metode)
+    with subcol[1]:
+        show_n_cluster(df, df["Cluster"], metode)
+
+def greet():
+    currentTime = datetime.datetime.now()
+
+    if currentTime.hour < 12:
+        st.subheader('Selamat pagi!')
+    elif 12 <= currentTime.hour < 18:
+        st.subheader('Selamat siang!')
+    else:
+        st.subheader('Selamat malam!')

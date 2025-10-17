@@ -22,30 +22,42 @@ st.markdown("<br><br>", unsafe_allow_html=True)
 cols = st.columns([3,1])
 with cols[0]:
     with st.expander("Mengenai website dan tujuannya"):
-        st.write("Website ini dirancang untuk mengelompokkan data hasil panen kacang hijau" \
-        " berdasarkan tingkat (tinggi / rendah) luas panen, produksi, dan produktivitasnya. Unggah " \
-        "dataset pada halaman home dan lihat hasil pengelompokan data per kabupaten/kota serta visualisasi " \
-        "grafik dan pemetaan wilayah Indonesia.")
-    with st.expander("Sumber Data"):
+        st.write("""
+        Website ini dirancang untuk mengelompokkan data hasil panen kacang hijau berdasarkan tingkat (tinggi / rendah) 
+                 luas panen, produksi, dan produktivitas. Pengelompokan ini dilakukan pada tingkat kabupaten/kota di 
+                 seluruh wilayah Indonesia. Dengan menggunakan metode Bisecting K-Means dan Agglomerative Hierarchical 
+                 Clustering, website ini bertujuan untuk memberikan wawasan yang lebih baik tentang pola dan tren dalam 
+                 data pertanian kacang hijau. Hasil dari pengelompokan ini diharapkan dapat membantu petani, pembuat 
+                 kebijakan, dan pemangku kepentingan lainnya dalam membuat keputusan terkait dengan produksi kacang hijau.
+        """)
+    with st.expander("Mengenai Sumber Data"):
         # st.write("Dataset yang digunakan pada website ini dapat diperoleh dari situs (Basis Data " \
         # "Statistik Pertanian) yang dimiliki oleh Kementrian Pertanian Republik Indonesia. Berikut syarat dataset :")
         st.write("""
-        Dataset dapat diperoleh dari situs (Basis Data Statistik Pertanian) yang dimiliki oleh 
-                 Kementrian Pertanian Republik Indonesia. Dataset yang diunggah harus :
-        1. Memiliki kolom "Lokasi", "Luas Panen", "Produksi", dan "Produktivitas"
-        2. Semua kolom selain "Lokasi" berisi numerik
+        Dataset dapat diperoleh dari situs (Basis Data Statistik Pertanian) dengan link https://bdsp2.pertanian.go.id/bdsp/id/lokasi 
+                 milik Kementrian Pertanian Republik Indonesia. Pilih **Subsektor** Tanaman Pangan > **Komoditas** Kacang Hijau > 
+                 **Indikator** Luas Panen, Produksi, Produktivitas > **Level** Kabupaten. Pilih **Satuan** yang sesuai dengan 
+                 Indikator dan **Tahun** dari 2010 ke atas. Klik **Cari** dan unduh data dengan menekan tombol **Excel**.
+        """)
+    with st.expander("Syarat / Bentuk Dataset"):
+        # st.write("Dataset yang digunakan pada website ini dapat diperoleh dari situs (Basis Data " \
+        # "Statistik Pertanian) yang dimiliki oleh Kementrian Pertanian Republik Indonesia. Berikut syarat dataset :")
+        st.write("""
+        Dataset yang diunggah harus :
+        1. Memiliki kolom **Lokasi**, **Luas Panen**, **Produksi**, dan **Produktivitas**
+        2. Semua kolom selain Lokasi berisi **numerik**
         """)
     with st.expander("Cara Kerja Situs Ini"):
         st.write("""
-        1. **Unggah Data**: Anda bisa mulai dengan mengunggah dataset untuk proses clustering pada halaman home.
-        2. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang Anda ingin terapkan pada dataset Anda.
+        1. **Unggah Data**: Mulai dengan mengunggah dataset untuk proses clustering pada halaman home.
+        2. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
         3. **Mulai Clustering**: Setelah itu dataset Anda akan langsung diproses dan hasil clustering akan langsung keluar.
         """)
     
 st.markdown("<br><br>", unsafe_allow_html=True)
 # Footer or Contact Information
 st.write("""
-Untuk pertanyaan lebih lanjut, Anda dapat menghubungi kami di:  
+Untuk pertanyaan lebih lanjut, Anda dapat menghubungi :  
 - Email: lisa.535190064@stu.untar.ac.id  
 - Telepon: +62 812 9620 7168
 """)

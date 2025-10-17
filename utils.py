@@ -23,13 +23,16 @@ def show_navbar():
     # </nav>
     # """, unsafe_allow_html=True)
     st.markdown("""
-    <nav class='navbar fixed-top navbar-dark' style='background-color: #183a1d;'>
+    <nav class='navbar fixed-top navbar-dark' style='background-color: #183a1d; padding-top: 17px;'>
         <div class='container'>
             <span class='nav-title' style='color: #f0e0b1;'>Clustering Data Kacang Hijau</span>
             <div class='nav-text navbar-nav'>
                 <ul class='nav justify-content-end'>
                     <li class='nav-item'>
                         <a class='nav-link' href='/'>Home</a>
+                    </li>
+                    <li class='nav-item'>
+                        <a class='nav-link' href='/analyze'>Analisis</a>
                     </li>
                     <li class='nav-item'>
                         <a class='nav-link' href='/about'>Tentang</a>
@@ -43,19 +46,26 @@ def show_navbar():
     </nav>
     """, unsafe_allow_html=True)
 
-    # Add a minimal hover effect with light underline and subtle pale green
+    # Add hover effect and customize the padding
     st.markdown("""
         <style>
             .navbar-dark .navbar-nav .nav-link {
                 color: #f0e0b1;  /* Off-white text color */
                 transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
             }
-            
+
             .navbar-dark .navbar-nav .nav-link:hover {
                 color: #ff6f61;  /* Bright orange on hover */
             }
+
+            .navbar {
+                padding-top: 20px;  /* Adjust padding-top to make the navbar thicker at the top */
+            }
         </style>
     """, unsafe_allow_html=True)
+
+    st.markdown("")
+
 
 def what_page():
     # Get page from URL query params
@@ -107,7 +117,7 @@ def show_footer():
     </div>
     <div class='container'>
         <footer class='flex-wrap justify-content-between align-items-center py-3 my-4 border-top border-primary'>
-            <p class='text-center text-body-secondary'> © 2025 Lisa </p>
+            <p class='text-center text-body-secondary'> Made using Streamlit by Lisa © 2025. </p>
         </footer>
     </div>
     """, unsafe_allow_html=True)
