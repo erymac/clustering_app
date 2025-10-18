@@ -10,7 +10,7 @@ import io
 import streamlit as st
 import pandas as pd
 
-icon_path = "/app/images/kacang_hijau_icon.png"
+icon_path = "app/images/kacang_hijau_icon.png"
 st.set_page_config(
     layout="wide",
     page_title="Clustering Data Kacang Hijau",
