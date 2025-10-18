@@ -34,7 +34,7 @@ st.markdown('<h1 class="custom-header" style="font-size:47px; align: center; col
             unsafe_allow_html=True)
 
 data_path = 'https://bdsp2.pertanian.go.id/bdsp/id/lokasi'
-data_sample = 'data sample\Kacang Hijau.csv'
+data_sample = 'data sample/Kacang Hijau.csv'
 
 col = st.columns(4, gap="large", vertical_alignment="top")
 with col[1]:
