@@ -63,6 +63,7 @@ def hide_sidebar():
             unsafe_allow_html=True,
     )
 
+
 def show_footer():
     st.markdown("""
     <div style='height:300px;'>
