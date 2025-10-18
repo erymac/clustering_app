@@ -1067,8 +1067,10 @@ def greet():
 
     if currentTime.hour < 12:
         st.subheader('Selamat pagi!')
-    elif 12 <= currentTime.hour < 18:
+    elif 12 <= currentTime.hour < 16:
         st.subheader('Selamat siang!')
+    elif 16 <= currentTime.hour < 19:
+        st.subheader('Selamat sore!')
     else:
         st.subheader('Selamat malam!')
 

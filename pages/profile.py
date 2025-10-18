@@ -20,16 +20,13 @@ page = query_params.get("page", "home")  # Default to 'Home' if none
 
 show_navbar()
 
-# st.title('Profil')
 st.markdown('''<h1 class="custom-header" style="font-size:47px; align: center; color: black; margin-bottom: 36px; font-family: Inter;">
             Profil
             </h1>''',
             unsafe_allow_html=True)
-# st.markdown("<br><br>", unsafe_allow_html=True)
 
 greet()
 
-# st.subheader("Halo!")
 cols = st.columns([3,1], border=True, gap="medium")
 with cols[0]:
     tabs = st.tabs(["Keahlian", "Pendidikan"])
@@ -42,19 +39,6 @@ with cols[0]:
              informasi baru yang bermanfaat. Saya juga menikmati proses membangun aplikasi 
              web yang interaktif dan user-friendly.
              """)
-        # st.write("Keahlian saya meliputi:")
-        # st.write("""
-        #          - Python
-        #          - R
-        #          - SQL
-        #          - HTML, CSS, JavaScript
-        #          - Streamlit
-        #          - Microsoft Power BI
-        #          - Bahasa Indonesia (Lisan dan Tulisan)
-        #          - Bahasa Inggris (Lisan dan Tulisan)
-        #          """)
-    # st.write("Saya Lisa, dan saat ini adalah mahasiswa semester akhir Fakultas Teknologi Informasi di Universitas " \
-    # "Tarumanagara. ")
     with tabs[1]:
         st.write("""
              Selama masa sekolah saya di berpendidikan Santo Leo II Jakarta. Saya lulus SMA pada tahun 2018 dan mulai kuliah di 
