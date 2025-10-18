@@ -1,5 +1,5 @@
 from fungsi import (
-    validate_columns_and_data, heatmap_corr, penyesuaian, pie_kontribusi, validate_columns_and_data, plot_panen_trends,
+    validate_columns_and_data, heatmap_corr, penyesuaian, pie_kontribusi, validate_columns_and_data, plot_tren_panen,
     avg_features, add_provinsi_to_df, preprocess_data, show_prod_dan_lp, columns_to_drop, data_selection
     )
 import streamlit as st
@@ -97,7 +97,7 @@ if uploaded_file is not None:
 
             # st.dataframe(df_copy.drop(['Luas Panen', 'Produksi', 'Produktivitas'], axis=1))
             # df_copy = df_copy.drop(['Luas Panen', 'Produksi', 'Produktivitas'], axis=1)
-            plot_panen_trends(df_copy)
+            plot_tren_panen(df_copy)
 
     except ValueError as e:
         st.error(f"Terjadi kesalahan: {e}")

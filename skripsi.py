@@ -1,9 +1,9 @@
 from fungsi import (
-    proses_clustering, show_map_explanation, validate_columns_and_data, compare_cluster, cluster_and_category_result,
-    show_n_cluster, show_map, avg_features, evaluate, preprocess_data, columns_to_drop, data_selection, BKMeans, AHC,
-    linechart_evaluation, compare, visualize_silhouette, normalize, plot_data_cluster, proses_clustering_perbandingan
+    proses_clustering, validate_columns_and_data, preprocess_data, columns_to_drop, data_selection, BKMeans, AHC,
+    normalize, proses_clustering_perbandingan
     )
 from utils import show_navbar, hide_sidebar, show_footer
+import re
 import csv
 import os
 import io
@@ -70,6 +70,7 @@ if not st.session_state.instruction_shown:
     instruction()
 
 uploaded_file = st.file_uploader("Unggah file dataset dalam excel (.csv / .xlsx)")
+dataframe_mentah = None
 if uploaded_file is not None:
     file_ext = os.path.splitext(uploaded_file.name)[-1]
     if file_ext == '.csv':
@@ -87,58 +88,83 @@ if uploaded_file is not None:
         dataframe_mentah = None
         st.error("Jenis file tidak didukung. Harap unggah file Excel (.csv / .xls / .xlsx).")
 
-    st.dataframe(dataframe_mentah, hide_index=True, height=300)
+    
+
+if dataframe_mentah is not None:
+    year_pattern = r' (\d{4})$'
+    metric_cols = [col for col in dataframe_mentah.columns 
+                    if re.search(year_pattern, col)]
+    tahun = sorted([int(re.search(year_pattern, col).group(1)) for col in metric_cols])
+
+    cluster_value = st.slider(
+        "Pilih rentang tahun data", 
+        min_value = min(tahun), max_value=max(tahun), step=1, value=(min(tahun), max(tahun)),
+        disabled = uploaded_file is None
+    )
+
+    dataframe_mentah = dataframe_mentah[[col for col in dataframe_mentah.columns if not re.search(year_pattern, col) or (re.search(year_pattern, col) and int(re.search(year_pattern, col).group(1)) >= cluster_value[0] and int(re.search(year_pattern, col).group(1)) <= cluster_value[1])]]
+    st.dataframe(dataframe_mentah, hide_index=True, height=213)
 
 cols = st.columns(2, gap="large", vertical_alignment="top")
 with cols[0]:
     metode = st.multiselect(
         "Pilih metode clustering",
         options=["Bisecting K-Means", "Agglomerative Hierarchical Clustering"],
-        default=["Agglomerative Hierarchical Clustering"]  # Default selection can be K-Means
+        default=["Agglomerative Hierarchical Clustering"],
+        help="Pilih satu atau dua metode clustering untuk dibandingkan."
     )
     enabled = metode != ""
     if "Agglomerative Hierarchical Clustering" in metode:
         linkage = st.selectbox(
             "Pilih jenis linkage untuk Agglomerative Hierarchical Clustering",
             options=["ward", "complete", "average", "single"],
-            index=0, width="stretch"
+            index=0, width="stretch",
+            help="Linkage menentukan cara pengukuran jarak antar cluster.",
         )
     
 with cols[1]:
     cluster_option = st.radio(
         "Pilih jumlah cluster atau dengan rentang",
         options=["Jumlah cluster", "Rentang cluster"],
-        horizontal=True)
+        horizontal=True,
+        help="Pilih jumlah cluster data atau beberapa rentang jumlah cluster untuk dievaluasi."
+    )
 
     if cluster_option == "Jumlah cluster": # Pilih angka jumlah cluster
         cluster_value = st.slider(
-            "Pilih banyak cluster", 
-            min_value=2, max_value=5, step=1, value=3
+            "Pilih berapa banyak data ingin dikelompokkan", 
+            min_value=2, max_value=5, step=1, value=3,
+            help="Pilih jumlah cluster data yang diinginkan."
         )
         n_cluster = range(cluster_value, cluster_value+1)
     else:
         cluster_range = st.slider( # pilih rentang jumlah cluster
             "Rentang cluster", 
-            min_value=2, max_value=5, step=1, value=(2, 5)
+            min_value=2, max_value=5, step=1, value=(2, 5),
+            help="Pilih rentang jumlah cluster data yang diinginkan."
         )
         min_cluster, max_cluster = cluster_range
         n_cluster = range(min_cluster, max_cluster + 1)
 
+# TOMBOL MULAI CLUSTERING
+st.markdown("<br>", unsafe_allow_html=True)
+cols = st.columns(5, gap="large", vertical_alignment="top")
+with cols[2]:
+    start = st.button("Mulai Clustering")
 # PROSES CLUSTERING
 st.markdown("<br>", unsafe_allow_html=True)
-if uploaded_file is not None:
+if start and uploaded_file is not None:
     try:
         validate_columns_and_data(dataframe_mentah)
         st.success(":green[:material/done:] Data berhasil divalidasi dan diproses.")
         df_copy = preprocess_data(dataframe_mentah)
         nama_lokasi_awal = df_copy['Lokasi'].to_list()
-        df_copy, scaler = normalize(df_copy)
+        df_copy = normalize(df_copy)
 
-        # df_array = df_copy.drop(['Lokasi'], axis=1)
         df_array = df_copy.drop(['Lokasi'], axis=1)
         df_array = df_array.values
 
-        df_temp = columns_to_drop(dataframe_mentah)
+        df_temp = columns_to_drop(dataframe_mentah) # temp untuk menampilkan tabel dataframe asli
         df_temp = data_selection (df_temp)
         df_temp = df_temp.reset_index()
         
@@ -161,112 +187,8 @@ if uploaded_file is not None:
             # KETIKA MEMILIH 2 METODE AKAN DIBANDINGKAN
             elif len(metode) == 2:
                 proses_clustering_perbandingan(linkage, df_copy, df_temp, df_array, n_cluster, cluster_option)
-                # linkage = linkage.lower()
-                # df_bkmeans, dfwaktu_bkmeans, silhouette_bkmeans, dbi_bkmeans, avg_silhouette_bkmeans, bestcluster_bkmeans, labels_bkmeans = BKMeans(df_array, n_cluster)
-                # df_ahc, dfwaktu_ahc, silhouette_ahc, dbi_ahc, avg_silhouette_ahc, bestcluster_ahc, labels_ahc = AHC(df_array, n_cluster, linkage)
-                # df_bkmeans['Metode'] = 'Bisecting K-Means'
-                # df_ahc['Metode'] = 'AHC'
-
-                # # Menyimpan nama metode
-                # metode1 = 'Bisecting K-Means'
-                # metode2 = 'Agglomerative Clustering'
-
-                # # JIKA MEMILIH RENTANG CLUSTER
-                # result = compare(silhouette_bkmeans, silhouette_ahc, dbi_bkmeans, dbi_ahc, avg_silhouette_bkmeans, avg_silhouette_ahc, bestcluster_bkmeans, bestcluster_ahc)
-
-                # # PERBANDINGAN ALGORITMA CLUSTERING
-                # st.subheader("Evaluasi Model Clustering", divider=True, anchor="evaluasi_model")
-                # subcol = st.columns([13,13], border=True, gap="medium")
-                # with subcol[0]:
-                #     if result == 'BKMeans':
-                #         st.write("#### Bisecting K-Means :green[:material/done:]")
-                #     else:
-                #         st.write("#### Bisecting K-Means")
-                #     st.write("")
-                #     evaluate(bestcluster_bkmeans, dfwaktu_bkmeans, silhouette_bkmeans, dbi_bkmeans, cluster_option)
-
-                # with subcol[1]:
-                #     if result == 'AHC':
-                #         st.write("#### Agglomerative Hierarchical Clustering :green[:material/done:]")
-                #     else:
-                #         st.write("#### Agglomerative Hierarchical Clustering")
-                #     st.write("")
-                #     evaluate(bestcluster_ahc, dfwaktu_ahc, silhouette_ahc, dbi_ahc, cluster_option)
-
-                # df_copy = cluster_and_category_result(df_copy, labels_bkmeans, bestcluster_bkmeans, 'Kategori (Bisecting K-Means)', 'Cluster BKM')
-                # df_copy = cluster_and_category_result(df_copy, labels_ahc, bestcluster_ahc, 'Kategori (Agglomerative Clustering)', 'Cluster AHC')
-                # df_copy = avg_features(df_copy)
-
-                # if cluster_option == "Rentang cluster":
-                #     # SILHOUETTE DAN DBI LINE CHART
-                #     fig_silhouette, fig_dbi = linechart_evaluation (df_bkmeans, df_ahc)
-                #     subcol = st.columns([13,13], border=True, gap="medium")
-                #     with subcol[0]:
-                #         st.plotly_chart(fig_silhouette, use_container_width=True)
-                #     with subcol[1]:
-                #         st.plotly_chart(fig_dbi, use_container_width=True)
-
-                # subcol = st.columns([13,13], gap="medium", vertical_alignment='top')
-                # with subcol[0]:
-                #     visualize_silhouette(df_array, df_copy['Cluster BKM'], bestcluster_bkmeans, silhouette_bkmeans, metode1)
-                
-                # with subcol[1]:
-                #     visualize_silhouette(df_array, df_copy['Cluster AHC'], bestcluster_ahc, silhouette_ahc, metode2)
-
-                # # PERBANDINGAN FITUR SETIAP CLUSTER
-                # st.subheader("Perbandingan Fitur Tiap Cluster", divider=True, anchor="perbandingan_cluster")
-                # subsubcol = st.columns(2, gap="medium")
-                # with subsubcol[0]:
-                #     st.write("##### Bisecting K-Means")
-                #     compare_cluster(df_copy, 'Cluster BKM')
-                # with subsubcol[1]:
-                #     st.write("##### Agglomerative Hierarchical Clustering")
-                #     compare_cluster(df_copy, 'Cluster AHC')
-
-                # # HASIL CLUSTERING ALGORITMA BISECTING K-MEANS DAN AGGLOMERATIVE HIERARCHICAL CLUSTERING
-                # st.subheader("Hasil Clustering", divider=True, anchor="hasil_clustering")
-                # st.write("##### Tabel Kategori Hasil Clustering")
-                # df_temp = cluster_and_category_result(df_temp, labels_bkmeans, bestcluster_bkmeans, 'Kategori (Bisecting K-Means)', 'Cluster BKM')
-                # df_temp = cluster_and_category_result(df_temp, labels_ahc, bestcluster_ahc, 'Kategori (Agglomerative Clustering)', 'Cluster AHC')
-                # df_temp = avg_features(df_temp)
-                # df_temp = df_temp.drop(columns=df_temp.filter(regex='20', axis=1).columns)
-                # st.dataframe(df_temp[['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Cluster BKM',
-                #                         'Kategori (Bisecting K-Means)', 'Cluster AHC', 'Kategori (Agglomerative Clustering)']], hide_index=True)
-
-                # # PEMETAAN HASIL CLUSTERING
-                # subsubcol = st.columns(2, gap="medium")
-                # st.write("##### Pemetaan Cluster Berdasarkan Tingkat Produksi")
-                # with subsubcol[0]:
-                #     st.write(f"##### {metode1}")
-                # with subsubcol[1]:
-                #     st.write(f"##### {metode2}")
-                # subsubcol = st.columns(2, gap="medium")
-                # with subsubcol[0]:
-                #     show_map(df_copy, labels_bkmeans, bestcluster_bkmeans)
-                # with subsubcol[1]:
-                #     show_map(df_copy, labels_ahc, bestcluster_ahc)
-                # show_map_explanation()
-
-                # # PIECHART JUMLAH ANGGOTA CLUSTER
-                # subsubcol = st.columns(2, gap="medium")
-                # with subsubcol[0]:
-                #     show_n_cluster(df_temp, 'Cluster BKM', metode1)
-                # with subsubcol[1]:
-                #     show_n_cluster(df_temp, 'Cluster AHC', metode2)
-
-                # # DETAIL RUANG HASIL CLUSTER
-                # subcol = st.columns(2, gap="medium", border=True)
-                # with subcol[0]:
-                #     plot_data_cluster(df_copy, df_copy['Cluster BKM'], metode1)
-                # with subcol[1]:
-                #     plot_data_cluster(df_copy, df_copy["Cluster AHC"], metode2)
 
     except ValueError as e:
         st.error(f"Terjadi kesalahan: {e}")
     
-
-# else:
-#     df = pd.read_csv('data sample\Kacang Hijau.csv', sep=';')
-#     clustering_sample(df)
-
 show_footer()
