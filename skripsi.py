@@ -10,12 +10,15 @@ import io
 import streamlit as st
 import pandas as pd
 
+icon_path = "/app/images/kacang_hijau_icon.png"
 st.set_page_config(
     layout="wide",
     page_title="Clustering Data Kacang Hijau",
-    page_icon=":white[:material/home:]"
+    page_icon=icon_path
 )
 hide_sidebar()
+
+st.image(icon_path, width=100)
 
 with open("app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)

@@ -114,7 +114,7 @@ with cols[0]:
             2. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
             3. **Mulai Clustering**: Setelah itu dataset Anda akan langsung diproses dan hasil clustering akan langsung keluar.
 
-            Setiap visualisasi dan tabel yang ditampilkan dapat diunduh dengan menekan tombol :green[:material/download:] yang tersedia pada 
+            Setiap visualisasi dan tabel yang ditampilkan dapat diunduh dengan menekan tombol :grey[:material/download:] yang tersedia pada 
                  pop-up yang muncul ketika mengarahkan kursor ke visualisasi.
             """)
     
