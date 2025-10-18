@@ -99,20 +99,12 @@ with cols[0]:
                     Indikator dan **Tahun** dari 2010 ke atas. Klik **Cari** dan unduh data dengan menekan tombol **Excel**.
             """)
         with st.expander("Syarat / Bentuk Dataset"):
-            # st.write("Dataset yang digunakan pada website ini dapat diperoleh dari situs (Basis Data " \
-            # "Statistik Pertanian) yang dimiliki oleh Kementrian Pertanian Republik Indonesia. Berikut syarat dataset :")
             st.write("""
             Dataset yang diunggah harus :
             1. Memiliki kolom **Lokasi**, **Luas Panen**, **Produksi**, dan **Produktivitas**
             2. Semua kolom selain Lokasi berisi **numerik**
             """)
     with tabs[2]:
-        # with st.expander("Cara Kerja Situs Ini"):
-        #     st.write("""
-        #     1. **Unggah Data**: Mulai dengan mengunggah dataset untuk proses clustering pada halaman home.
-        #     2. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
-        #     3. **Mulai Clustering**: Setelah itu dataset Anda akan langsung diproses dan hasil clustering akan langsung keluar.
-        #     """)
         st.write("""
             1. **Unggah Data**: Mulai dengan mengunggah dataset untuk proses clustering pada halaman home.
             2. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
@@ -123,25 +115,11 @@ with cols[0]:
             """)
     
 st.markdown("<br><br>", unsafe_allow_html=True)
-# Footer or Contact Information
+# Contact Information
 st.write("""
 Untuk pertanyaan lebih lanjut, Anda dapat menghubungi :  
-- Email: lisa.535190064@stu.untar.ac.id  
+- Email: lisakurniadi16@gmail.com
 - Telepon: +62 812 9620 7168
 """)
     
 show_footer()
-    
-# # --- Route content based on page ---
-# st.write("")
-
-# if page == "home":
-#     home()
-# elif page == "about":
-#     content()
-# elif page == "profile":
-#     # st.switch_page("profile.py")
-#     # st.page_link("profile.py")
-#     profile.content()
-# else:
-#     st.title("Page not found")
