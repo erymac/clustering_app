@@ -78,6 +78,12 @@ navbar {
     text-decoration: none;
     padding: 0 0 0 60px;
 }
+.stAppToolbar {
+    display:none;
+}
+.stApp [data-testid="stToolbar"]{
+    display:none;
+}
 
 /* div.stButton > button:first-child {
     background-color: #8D957E;
