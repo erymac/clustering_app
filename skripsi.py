@@ -101,7 +101,7 @@ if dataframe_mentah is not None:
     )
 
     dataframe_mentah = dataframe_mentah[[col for col in dataframe_mentah.columns if not re.search(year_pattern, col) or (re.search(year_pattern, col) and int(re.search(year_pattern, col).group(1)) >= cluster_value[0] and int(re.search(year_pattern, col).group(1)) <= cluster_value[1])]]
-    st.dataframe(dataframe_mentah, hide_index=True, height=213)
+    st.dataframe(dataframe_mentah, hide_index=True, height=250)
 
 cols = st.columns(2, gap="large", vertical_alignment="top")
 with cols[0]:

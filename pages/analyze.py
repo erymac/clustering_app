@@ -38,6 +38,7 @@ st.write('''Halaman ini digunakan untuk menganalisis dataset hasil panen kacang 
          tren panen dari tahun ke tahun, serta visualisasi kontribusi produksi dan luas panen berdasarkan provinsi.''')
 
 uploaded_file = st.file_uploader("Unggah dataset berbentuk excel (.csv / .xlsx).")
+dataframe_mentah = None
 if uploaded_file is not None:
     file_ext = os.path.splitext(uploaded_file.name)[-1].lower()
     if file_ext == '.csv':
@@ -54,7 +55,20 @@ if uploaded_file is not None:
         dataframe_mentah = None
         st.error("Jenis file tidak didukung. Harap unggah file Excel (.csv / .xlsx).")
 
-    st.dataframe(dataframe_mentah, hide_index=True, height=300)
+if dataframe_mentah is not None:
+    year_pattern = r' (\d{4})$'
+    metric_cols = [col for col in dataframe_mentah.columns 
+                    if re.search(year_pattern, col)]
+    tahun = sorted([int(re.search(year_pattern, col).group(1)) for col in metric_cols])
+
+    cluster_value = st.slider(
+        "Pilih rentang tahun data", 
+        min_value = min(tahun), max_value=max(tahun), step=1, value=(min(tahun), max(tahun)),
+        disabled = uploaded_file is None
+    )
+
+    dataframe_mentah = dataframe_mentah[[col for col in dataframe_mentah.columns if not re.search(year_pattern, col) or (re.search(year_pattern, col) and int(re.search(year_pattern, col).group(1)) >= cluster_value[0] and int(re.search(year_pattern, col).group(1)) <= cluster_value[1])]]
+    st.dataframe(dataframe_mentah, hide_index=True, height=250)
 
 if uploaded_file is not None:
     try:
@@ -64,27 +78,20 @@ if uploaded_file is not None:
         df_array = df_copy.drop(['Lokasi'], axis=1)
         df_array = df_array.values
 
+        df_copy = avg_features(df_copy)
+        dataframe_mentah = avg_features(dataframe_mentah)
         with st.spinner("Memproses data..."):
-            df_copy = avg_features(df_copy)
-            dataframe_mentah = avg_features(dataframe_mentah)
             cols = st.columns(2, gap="small", vertical_alignment="top")
             with cols[0]:
                 heatmap_corr(df_copy[['Luas Panen', 'Produksi', 'Produktivitas']])
             with cols[1]:
                 st.write("##### Data Rata-rata Fitur per Lokasi")
                 nama_lokasi_awal = dataframe_mentah['Lokasi'].to_list()
-                # dataframe_mentah = columns_to_drop (dataframe_mentah)
-                # dataframe_mentah = data_selection(dataframe_mentah)
-                # dataframe_mentah = dataframe_mentah.reset_index() # Reset index 'Lokasi'
                 dataframe_mentah = penyesuaian(dataframe_mentah)
                 dataframe_mentah = add_provinsi_to_df(dataframe_mentah)
-                # drop_lokasi = ['Pesisir Barat', 'Mempawah', 'Kab. Banjar', 'Buton Tengah', 'Pegunungan Arfak']
-                # # nama_lokasi_awal = [item for item in drop_lokasi if item in nama_lokasi_awal]
-                # [x for x in sents if not x.startswith('@$\t') and not x.startswith('#')]
-                # # dataframe_mentah['Lokasi'] = nama_lokasi_awal
-                # st.write(len(nama_lokasi_awal))
                 st.dataframe(dataframe_mentah[['Provinsi', 'Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas']], hide_index=True)
 
+        with st.spinner("Memproses data..."):
             cols = st.columns(2, gap="small", vertical_alignment="top")
             with cols[0]:
                 year_pattern = r' (\d{4})$'
@@ -99,9 +106,7 @@ if uploaded_file is not None:
                 bar_chart = show_prod_dan_lp(df_copy.drop(['Luas Panen', 'Produksi', 'Produktivitas'], axis=1))
                 st.plotly_chart(bar_chart)
 
-            # st.dataframe(df_copy.drop(['Luas Panen', 'Produksi', 'Produktivitas'], axis=1))
-            # df_copy = df_copy.drop(['Luas Panen', 'Produksi', 'Produktivitas'], axis=1)
-            plot_tren_panen(df_copy)
+        plot_tren_panen(df_copy)
 
     except ValueError as e:
         st.error(f"Terjadi kesalahan: {e}")
