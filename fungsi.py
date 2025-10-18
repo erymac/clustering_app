@@ -1044,9 +1044,7 @@ def proses_clustering(df, metode, cluster_labels, cluster_optimal, cluster_optio
     st.write("##### Tabel Data Hasil Clustering")
     df_temp = cluster_and_category_result(df_temp, cluster_labels, cluster_optimal, 'Kategori', 'Cluster')
     df_temp = avg_features(df_temp)
-    # df_temp = df_temp.drop(columns=df_temp.filter(regex='20', axis=1).columns)
     st.dataframe(df_temp[['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Kategori', 'Cluster']], hide_index=True)
-    # st.dataframe(df[['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Cluster', 'Kategori']], hide_index=True)
     
     st.write("##### Pemetaan Tingkat Produksi Kacang Hijau")
     show_map(df, cluster_labels, cluster_optimal, zoom=5, height=500)

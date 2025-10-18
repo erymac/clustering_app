@@ -88,8 +88,6 @@ if uploaded_file is not None:
         dataframe_mentah = None
         st.error("Jenis file tidak didukung. Harap unggah file Excel (.csv / .xls / .xlsx).")
 
-    
-
 if dataframe_mentah is not None:
     year_pattern = r' (\d{4})$'
     metric_cols = [col for col in dataframe_mentah.columns 
