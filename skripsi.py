@@ -15,6 +15,15 @@ st.set_page_config(
     page_title="Clustering Data Kacang Hijau",
     page_icon="app/images/kacang_hijau_icon.png"
 )
+
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 hide_sidebar()
 
 with open("app/style.css" ) as css:
