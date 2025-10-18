@@ -481,70 +481,71 @@ def merge_gdf(data):
     return gdf_provinsi
 
 def map_folium(data, n_cluster, zoom=4, width=1500, height=400):
-    gdf_provinsi = merge_gdf(data)
+    with st.spinner("Memuat peta..."):
+        gdf_provinsi = merge_gdf(data)
 
-    gdf_provinsi['Cluster'] = pd.to_numeric(gdf_provinsi['Cluster'], errors='coerce')
-    cluster_labels = generate_cluster_category(n_cluster)
+        gdf_provinsi['Cluster'] = pd.to_numeric(gdf_provinsi['Cluster'], errors='coerce')
+        cluster_labels = generate_cluster_category(n_cluster)
 
-    gdf_provinsi['color'] = gdf_provinsi['Cluster'].map(COLOR_MAP)
+        gdf_provinsi['color'] = gdf_provinsi['Cluster'].map(COLOR_MAP)
 
-    label_mapping = {i: label for i, label in enumerate(cluster_labels)}
+        label_mapping = {i: label for i, label in enumerate(cluster_labels)}
 
-    unique_clusters = gdf_provinsi[['Cluster', 'color']].drop_duplicates()
-    unique_clusters = unique_clusters.sort_values(by='Cluster')
-    unique_clusters['Cluster'] = unique_clusters['Cluster'].map(label_mapping).fillna('Tidak ada data')
-    unique_clusters['color'] = unique_clusters['color'].fillna('lightgrey')
+        unique_clusters = gdf_provinsi[['Cluster', 'color']].drop_duplicates()
+        unique_clusters = unique_clusters.sort_values(by='Cluster')
+        unique_clusters['Cluster'] = unique_clusters['Cluster'].map(label_mapping).fillna('Tidak ada data')
+        unique_clusters['color'] = unique_clusters['color'].fillna('lightgrey')
 
-    # Ganti nilai cluster numerik dengan label kategori
-    gdf_provinsi['Cluster'] = gdf_provinsi['Cluster'].map(label_mapping).fillna('Tidak ada data').astype(str)
+        # Ganti nilai cluster numerik dengan label kategori
+        gdf_provinsi['Cluster'] = gdf_provinsi['Cluster'].map(label_mapping).fillna('Tidak ada data').astype(str)
 
-    gdf_provinsi['color'] = gdf_provinsi['color'].fillna('lightgrey') # Warna abu-abu untuk kabupaten/kota tanpa data
+        gdf_provinsi['color'] = gdf_provinsi['color'].fillna('lightgrey') # Warna abu-abu untuk kabupaten/kota tanpa data
 
-    # Menyederhanakan geometries di gdf_provinsi, simpan kolom 'NAME_2'
-    gdf_provinsi_simplified = gdf_provinsi[['NAME_2', 'geometry']].simplify(tolerance=0.01, preserve_topology=True)
+        # Menyederhanakan geometries di gdf_provinsi, simpan kolom 'NAME_2'
+        gdf_provinsi_simplified = gdf_provinsi[['NAME_2', 'geometry']].simplify(tolerance=0.01, preserve_topology=True)
 
-    # Ubah kembali ke GeoDataFrame jika hasilnya GeoSeries
-    if isinstance(gdf_provinsi_simplified, gpd.GeoSeries):
-        gdf_provinsi_simplified = gpd.GeoDataFrame(geometry=gdf_provinsi_simplified, crs=gdf_provinsi.crs)
-        gdf_provinsi_simplified['NAME_2'] = gdf_provinsi['NAME_2'] # Tambahkan kolom 'NAME_2' kembali
+        # Ubah kembali ke GeoDataFrame jika hasilnya GeoSeries
+        if isinstance(gdf_provinsi_simplified, gpd.GeoSeries):
+            gdf_provinsi_simplified = gpd.GeoDataFrame(geometry=gdf_provinsi_simplified, crs=gdf_provinsi.crs)
+            gdf_provinsi_simplified['NAME_2'] = gdf_provinsi['NAME_2'] # Tambahkan kolom 'NAME_2' kembali
 
-    # Gabungkan kolom 'Cluster', 'provinsi', dan 'color' ke gdf_provinsi_simplified
-    gdf_provinsi_simplified = gdf_provinsi_simplified.merge(gdf_provinsi[['NAME_2', 'Cluster', 'provinsi', 'color']], on='NAME_2', how='left')
+        # Gabungkan kolom 'Cluster', 'provinsi', dan 'color' ke gdf_provinsi_simplified
+        gdf_provinsi_simplified = gdf_provinsi_simplified.merge(gdf_provinsi[['NAME_2', 'Cluster', 'provinsi', 'color']], on='NAME_2', how='left')
 
-    # Replace NaN in 'Cluster' with 'no data'
-    gdf_provinsi_simplified['Cluster'] = gdf_provinsi_simplified['Cluster'].fillna('no data').astype(str)
-    gdf_provinsi_simplified.rename(columns={'NAME_2': 'Lokasi', 'provinsi': 'Provinsi'}, inplace=True)
+        # Replace NaN in 'Cluster' with 'no data'
+        gdf_provinsi_simplified['Cluster'] = gdf_provinsi_simplified['Cluster'].fillna('no data').astype(str)
+        gdf_provinsi_simplified.rename(columns={'NAME_2': 'Lokasi', 'provinsi': 'Provinsi'}, inplace=True)
 
-    m = folium.Map(location=[-2.5, 118], zoom_start=zoom, tiles='cartodbpositron')
+        m = folium.Map(location=[-2.5, 118], zoom_start=zoom, tiles='cartodbpositron')
 
-    for _, row in unique_clusters.iterrows():
-        cluster_label = row['Cluster']
-        cluster_color = row['color']
-        
-        legend_label = f'<span style="color:{cluster_color};">{cluster_label}</span>'
-        fg = folium.FeatureGroup(name=legend_label, show=True)
+        for _, row in unique_clusters.iterrows():
+            cluster_label = row['Cluster']
+            cluster_color = row['color']
+            
+            legend_label = f'<span style="color:{cluster_color};">{cluster_label}</span>'
+            fg = folium.FeatureGroup(name=legend_label, show=True)
 
-        # Filter GeoDataFrame for this cluster
-        gdf_cluster = gdf_provinsi_simplified[gdf_provinsi_simplified['Cluster'] == cluster_label]
+            # Filter GeoDataFrame for this cluster
+            gdf_cluster = gdf_provinsi_simplified[gdf_provinsi_simplified['Cluster'] == cluster_label]
 
-        # Create GeoJson just for this cluster
-        gj = folium.GeoJson(
-            gdf_cluster,
-            style_function=lambda feature, color=cluster_color: {
-                'fillColor': color,
-                'color': "#484848",
-                'weight': 0.3,
-                'fillOpacity': 0.8,
-            },
-            tooltip=folium.GeoJsonTooltip(fields=['Cluster', 'Lokasi', 'Provinsi']),
-        )
-        gj.add_to(fg)
-        fg.add_to(m)
+            # Create GeoJson just for this cluster
+            gj = folium.GeoJson(
+                gdf_cluster,
+                style_function=lambda feature, color=cluster_color: {
+                    'fillColor': color,
+                    'color': "#484848",
+                    'weight': 0.3,
+                    'fillOpacity': 0.8,
+                },
+                tooltip=folium.GeoJsonTooltip(fields=['Cluster', 'Lokasi', 'Provinsi']),
+            )
+            gj.add_to(fg)
+            fg.add_to(m)
 
-    m.add_child(folium.LatLngPopup())
+        m.add_child(folium.LatLngPopup())
 
-    folium.LayerControl(position='bottomleft', collapsed=False).add_to(m)
-    folium_static(m, width=width, height=height)
+        folium.LayerControl(position='bottomleft', collapsed=False).add_to(m)
+        folium_static(m, width=width, height=height)
 
 def show_map_explanation():
     with st.expander("Lihat penjelasan"):
@@ -783,12 +784,16 @@ def add_cluster_to_df (df, cluster_labels):
     return df
 
 def show_map(df, cluster_labels, cluster_optimal, zoom=4, width=1500, height=400):
-    df = add_cluster_to_df(df, cluster_labels)
+    # df = add_cluster_to_df(df, cluster_labels)
+    df['Cluster'] = cluster_labels
+    df = sort_cluster(df)
+    df = penyesuaian(df)
     map_folium(df, cluster_optimal, zoom=zoom, width=width, height=height)
 
 def cluster_and_category_result(df, cluster_labels, cluster_optimal, nama_kolom_kategori, nama_kolom_cluster):
-    df = add_cluster_to_df(df, cluster_labels)
+    # df = add_cluster_to_df(df, cluster_labels)
     # df = categorize_df(df, cluster_optimal, f'{nama_kolom_kategori}', f'{nama_cluster}')
+    df['Cluster'] = cluster_labels
     df = df.rename(columns={'Cluster': f'{nama_kolom_cluster}'})
     kategori = generate_cluster_category(cluster_optimal)
     label_mapping = {i: label for i, label in enumerate(kategori)}
@@ -1042,7 +1047,7 @@ def proses_clustering(df, metode, cluster_labels, cluster_optimal, cluster_optio
     compare_cluster(df, 'Cluster', height=400, direction='horizontal')
     
     st.write("##### Tabel Data Hasil Clustering")
-    df_temp = cluster_and_category_result(df_temp, cluster_labels, cluster_optimal, 'Kategori', 'Cluster')
+    df_temp = cluster_and_category_result(df_temp, df['Cluster'], cluster_optimal, 'Kategori', 'Cluster')
     df_temp = avg_features(df_temp)
     st.dataframe(df_temp[['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Kategori', 'Cluster']], hide_index=True)
     
@@ -1103,6 +1108,8 @@ def proses_clustering_perbandingan(linkage, df_copy, df_temp, df_array, n_cluste
     df_copy = cluster_and_category_result(df_copy, labels_bkmeans, bestcluster_bkmeans, 'Kategori (Bisecting K-Means)', 'Cluster BKM')
     df_copy = cluster_and_category_result(df_copy, labels_ahc, bestcluster_ahc, 'Kategori (Agglomerative Clustering)', 'Cluster AHC')
     df_copy = avg_features(df_copy)
+    df_copy = sort_cluster(df_copy, 'Cluster BKM')
+    df_copy = sort_cluster(df_copy, 'Cluster AHC')
 
     if cluster_option == "Rentang cluster":
         # SILHOUETTE DAN DBI LINE CHART
@@ -1133,8 +1140,8 @@ def proses_clustering_perbandingan(linkage, df_copy, df_temp, df_array, n_cluste
     # HASIL CLUSTERING ALGORITMA BISECTING K-MEANS DAN AGGLOMERATIVE HIERARCHICAL CLUSTERING
     st.subheader("Hasil Clustering", divider=True, anchor="hasil_clustering")
     st.write("##### Tabel Kategori Hasil Clustering")
-    df_temp = cluster_and_category_result(df_temp, labels_bkmeans, bestcluster_bkmeans, 'Kategori (Bisecting K-Means)', 'Cluster BKM')
-    df_temp = cluster_and_category_result(df_temp, labels_ahc, bestcluster_ahc, 'Kategori (Agglomerative Clustering)', 'Cluster AHC')
+    df_temp = cluster_and_category_result(df_temp, df_copy['Cluster BKM'], bestcluster_bkmeans, 'Kategori (Bisecting K-Means)', 'Cluster BKM')
+    df_temp = cluster_and_category_result(df_temp, df_copy['Cluster AHC'], bestcluster_ahc, 'Kategori (Agglomerative Clustering)', 'Cluster AHC')
     df_temp = avg_features(df_temp)
     df_temp = df_temp.drop(columns=df_temp.filter(regex='20', axis=1).columns)
     st.dataframe(df_temp[['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Cluster BKM',
