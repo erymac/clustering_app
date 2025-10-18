@@ -18,8 +18,6 @@ st.set_page_config(
 )
 hide_sidebar()
 
-st.image(icon_path, width=100)
-
 with open("app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous">', unsafe_allow_html=True)
@@ -38,6 +36,8 @@ st.markdown('<h1 class="custom-header" style="font-size:47px; align: center; col
 
 data_path = 'https://bdsp2.pertanian.go.id/bdsp/id/lokasi'
 data_sample = 'data sample/Kacang Hijau.csv'
+
+st.image(icon_path, width=100)
 
 col = st.columns(4, gap="large", vertical_alignment="top")
 with col[1]:
