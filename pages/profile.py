@@ -3,7 +3,11 @@ from fungsi import greet
 from utils import show_navbar, hide_sidebar, show_footer
 
 
-st.set_page_config(layout="wide", page_title="Profile")
+st.set_page_config(
+    layout="wide", 
+    page_title="Profile",
+    page_icon="app/images/kacang_hijau_icon.png"
+    )
 hide_sidebar()
 
 with open( "app\style.css" ) as css:

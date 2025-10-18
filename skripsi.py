@@ -10,11 +10,10 @@ import io
 import streamlit as st
 import pandas as pd
 
-icon_path = "app/images/kacang_hijau_icon.png"
 st.set_page_config(
     layout="wide",
     page_title="Clustering Data Kacang Hijau",
-    page_icon=icon_path
+    page_icon="app/images/kacang_hijau_icon.png"
 )
 hide_sidebar()
 
@@ -36,8 +35,6 @@ st.markdown('<h1 class="custom-header" style="font-size:47px; align: center; col
 
 data_path = 'https://bdsp2.pertanian.go.id/bdsp/id/lokasi'
 data_sample = 'data sample/Kacang Hijau.csv'
-
-st.image(icon_path, width=100)
 
 col = st.columns(4, gap="large", vertical_alignment="top")
 with col[1]:
