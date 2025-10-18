@@ -10,7 +10,7 @@ st.set_page_config(
     )
 hide_sidebar()
 
-with open( "app\style.css" ) as css:
+with open( "app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous">', unsafe_allow_html=True)
 
