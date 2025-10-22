@@ -61,18 +61,15 @@ with cols[0]:
                     berbeda. Teknik ini berguna untuk mengidentifikasi pola tersembunyi dalam data dan memahami struktur 
                     data secara lebih baik.
             """)
-        with st.expander("Bisecting K-Means"):
+        with st.expander("Teknik Clustering"):
             st.write("""
-            Bisecting K-Means adalah varian dari algoritma K-Means yang digunakan untuk pengelompokan data. 
+            1. **Bisecting K-Means** adalah varian dari algoritma K-Means yang digunakan untuk pengelompokan data. 
                     Algoritma ini memulai dengan seluruh data dalam satu cluster dan kemudian secara iteratif membagi 
                     cluster tersebut menjadi dua sub-cluster hingga jumlah cluster yang diinginkan tercapai. Proses 
                     pembagian dilakukan dengan menerapkan algoritma K-Means pada cluster dengan varians tertinggi untuk dibagi. 
                     Metode ini sering kali menghasilkan cluster yang lebih baik dan lebih stabil dibandingkan dengan 
                     K-Means tradisional, terutama pada dataset yang besar dan kompleks.
-            """)
-        with st.expander("Agglomerative Hierarchical Clustering"):
-            st.write("""
-            Agglomerative Hierarchical Clustering adalah metode pengelompokan data yang membangun cluster secara 
+            2. **Agglomerative Hierarchical Clustering** adalah metode pengelompokan data yang membangun cluster secara 
                      hierarki. Proses dimulai dengan setiap data sebagai cluster individu, kemudian secara iteratif 
                      menggabungkan dua cluster terdekat berdasarkan jarak atau kemiripan hingga jumlah cluster yang 
                      diinginkan tercapai. Karena proses penggabungan ini, metode ini umumnya memakan lebih banyak memori dan 
@@ -106,9 +103,17 @@ with cols[0]:
             """)
     with tabs[2]:
         st.write("""
-            1. **Unggah Data**: Mulai dengan mengunggah dataset untuk proses clustering pada halaman home.
+            1. **Unggah Data**: Klik "Browse files" dan mengunggah dataset berbentuk excel (.csv / .xlsx).
+            2. **Pilih Rentang Tahun**: Pilih rentang tahun yang ingin digunakan untuk proses clustering.
             2. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
-            3. **Mulai Clustering**: Setelah itu dataset Anda akan langsung diproses dan hasil clustering akan langsung keluar.
+            3. **Mulai Clustering**: Dataset yang diunggah dapat diproses setelah pengguna memencet tombol "Mulai Clustering".
+            4. **Lihat Hasil**: Setelah proses clustering selesai, hasil pengelompokan akan ditampilkan beserta metrik evaluasi.
+
+            Jenis linkage Agglomerative Hierarchical Clustering :
+            - Ward adalah metode yang meminimalkan variansi total dalam cluster.
+            - Complete adalah metode yang meminimalkan jarak maksimum antara titik dalam cluster.
+            - Average adalah metode yang meminimalkan jarak rata-rata antara titik dalam cluster.
+            - Single adalah metode yang meminimalkan jarak minimum antara titik dalam cluster.
 
             Setiap visualisasi dan tabel yang ditampilkan dapat diunduh dengan menekan tombol :grey[:material/download:] yang tersedia pada 
                  pop-up yang muncul ketika mengarahkan kursor ke visualisasi.

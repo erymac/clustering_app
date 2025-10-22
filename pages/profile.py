@@ -1,7 +1,7 @@
 import streamlit as st
 from fungsi import greet
 from utils import show_navbar, hide_sidebar, show_footer
-
+import os
 
 st.set_page_config(
     layout="wide", 
@@ -46,10 +46,19 @@ with cols[0]:
                  tetapi saya sedang menyelesaikan tugas akhir saya melalui projek ini. Saya berharap dapat lulus pada tahun 2025.
              """)
 with cols[1]:
+    # st.image("app/images/lisa_profile.JPG", width=150)
+    # st.markdown('<img src="app/images/lisa_profile.JPG">', unsafe_allow_html=True)
+    st.markdown(''' 
+            <div class="circle-image">
+                <img src="app/images/lisa_profile.png">
+            </div>
+             ''', unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     st.write("Kontak :")
     st.write("""
-             lisa.535190064@stu.untar.ac.id
+             lisakurniadi16@gmail.com  
              Telepon: +62 812 9620 7168
              """)
+
 
 show_footer()

@@ -58,11 +58,21 @@ if 'instruction_shown' not in st.session_state:
 def instruction():
     if not st.session_state.instruction_shown:
         st.write("""
-        1. **Unggah Data**: Mulai dengan klik "Browse files" dan mengunggah dataset berbentuk excel (.csv / .xlsx).
+        **Sumber data** dapat diunduh dari [BDSP](https://bdsp2.pertanian.go.id/bdsp/id/lokasi) atau menggunakan contoh dataset yang diunduh melalui tombol "Contoh Dataset".
+        
+        Berikut cara menggunakan situs clustering data kacang hijau :
+        1. **Unggah Data**: Klik "Browse files" dan mengunggah dataset berbentuk excel (.csv / .xlsx).
+        2. **Pilih Rentang Tahun**: Pilih rentang tahun yang ingin digunakan untuk proses clustering.
         2. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
-        3. **Mulai Clustering**: Dataset yang diunggah akan langsung diproses dan mengeluarkan hasil clustering.
+        3. **Mulai Clustering**: Dataset yang diunggah dapat diproses setelah pengguna memencet tombol "Mulai Clustering".
+        4. **Lihat Hasil**: Setelah proses clustering selesai, hasil pengelompokan akan ditampilkan beserta metrik evaluasi.
 
-        Sumber data dapat diunduh dari [BDSP](https://bdsp2.pertanian.go.id/bdsp/id/lokasi) atau menggunakan contoh dataset yang diunduh melalui tombol "Contoh Dataset".
+        Jenis linkage Agglomerative Hierarchical Clustering :
+        - Ward adalah metode yang meminimalkan variansi total dalam cluster.
+        - Complete adalah metode yang meminimalkan jarak maksimum antara titik dalam cluster.
+        - Average adalah metode yang meminimalkan jarak rata-rata antara titik dalam cluster.
+        - Single adalah metode yang meminimalkan jarak minimum antara titik dalam cluster.
+
         """)
         st.session_state.instruction_shown = True
 
@@ -151,10 +161,11 @@ with cols[2]:
     start = st.button("Mulai Clustering")
 # PROSES CLUSTERING
 st.markdown("<br>", unsafe_allow_html=True)
-if start and uploaded_file is not None:
+if start and uploaded_file and len(metode) > 0:
     try:
         validate_columns_and_data(dataframe_mentah)
-        st.success(":green[:material/done:] Data berhasil divalidasi dan diproses.")
+        # st.success(":green[:material/done:] Data berhasil divalidasi dan diproses.")
+        st.badge("Data berhasil divalidasi dan diproses.", icon=":material/check:", color="green")
         df_copy = preprocess_data(dataframe_mentah)
         nama_lokasi_awal = df_copy['Lokasi'].to_list()
         df_copy = normalize(df_copy)
@@ -188,5 +199,12 @@ if start and uploaded_file is not None:
 
     except ValueError as e:
         st.error(f"Terjadi kesalahan: {e}")
+
+else:
+    if start and uploaded_file is None:
+        st.error("⚠️ Harap unggah file dataset terlebih dahulu.")
+        # st.badge("⚠️ Harap unggah file dataset terlebih dahulu.", color="orange")
+    elif start and len(metode) == 0:
+        st.error("⚠️ Harap setidaknya pilih salah satu metode clustering.")
     
 show_footer()
