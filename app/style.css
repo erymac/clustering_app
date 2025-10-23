@@ -144,19 +144,6 @@ div.stButton > button:first-child:hover {
     cursor: pointer;
     transform: translateY(-2px);
 } */
-.circle-image {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    overflow: hidden;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-/* .circle-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-} */
 
 div.stButton > button:first-child {
     background-color: #CC512D;
@@ -228,4 +215,12 @@ div.st-emotion-cache-mxeqmx {
 
 .border-primary:nth-child(1) {
   border-color: #E6DCCE !important;
+}
+
+button[title^=Exit]+div [data-testid=stImage]{
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
 }

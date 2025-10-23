@@ -27,6 +27,10 @@ cols = st.columns([3,1])
 with cols[0]:
     tabs = st.tabs(["Latar Belakang & Informasi Terkait", "Mengenai Data", "Cara Kerja Situs"])
     with tabs[0]:
+        with st.expander("Kacang Hijau"):
+            st.write("""
+            Kacang hijau adalah salah satu jenis kacang-kacangan / legum yang umumnya tumbuh di daerah tropis.
+            """)
         with st.expander("Mengenai website dan tujuannya"):
             st.write("""
             Website ini dirancang untuk mengelompokkan data hasil panen kacang hijau berdasarkan tingkat (tinggi / rendah) 
@@ -56,7 +60,7 @@ with cols[0]:
                     data mentah menjadi informasi yang bermanfaat untuk pengambilan keputusan yang lebih baik.
                     
             Clustering adalah salah satu teknik dalam data mining yang digunakan untuk mengelompokkan data berdasarkan 
-                    kemiripan atau jarak antar data. Dalam clustering, data yang memiliki karakteristik serupa akan 
+                    kemiripan sifat atau jarak antar data. Dalam clustering, data yang memiliki karakteristik serupa akan 
                     dikelompokkan bersama dalam satu cluster, sementara data yang berbeda akan ditempatkan di cluster yang 
                     berbeda. Teknik ini berguna untuk mengidentifikasi pola tersembunyi dalam data dan memahami struktur 
                     data secara lebih baik.

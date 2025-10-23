@@ -36,9 +36,13 @@ with cols[0]:
              Fakultas Teknologi Informasi di Universitas Tarumanagara. Saya memiliki 
              minat dalam bidang data science dan pengembangan web karena Saya senang 
              menelaah dan menemukan hal-hal baru dalam data, serta mengubahnya menjadi 
-             informasi baru yang bermanfaat. Saya juga menikmati proses membangun aplikasi 
+             informasi baru yang bermanfaat. Saya juga menyukai proses membangun aplikasi 
              web yang interaktif dan user-friendly.
              """)
+        # st.write("""
+        #      Selain pemrograman dengan Python, saya juga memiliki keahlian dalam mengolah 
+        #          data dan visualisasi menggunakan bahasa R.
+        #      """)
     with tabs[1]:
         st.write("""
              Selama masa sekolah saya di berpendidikan Santo Leo II Jakarta. Saya lulus SMA pada tahun 2018 dan mulai kuliah di 
@@ -46,19 +50,14 @@ with cols[0]:
                  tetapi saya sedang menyelesaikan tugas akhir saya melalui projek ini. Saya berharap dapat lulus pada tahun 2025.
              """)
 with cols[1]:
-    # st.image("app/images/lisa_profile.JPG", width=150)
-    # st.markdown('<img src="app/images/lisa_profile.JPG">', unsafe_allow_html=True)
-    st.markdown(''' 
-            <div class="circle-image">
-                <img src="app/images/lisa_profile.png">
-            </div>
-             ''', unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.write("Kontak :")
+    column = st.columns([1,4,1], gap=None)
+    with column[1]:
+        st.image("app/images/profile.png", width=150)
     st.write("""
-             lisakurniadi16@gmail.com  
-             Telepon: +62 812 9620 7168
-             """)
+            Kontak :  
+            lisakurniadi16@gmail.com  
+            Telepon: +62 812 9620 7168
+            """)
 
 
 show_footer()
