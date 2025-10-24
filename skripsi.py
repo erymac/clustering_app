@@ -45,7 +45,7 @@ with col[1]:
     )
 with col[2]:
     st.download_button(
-        label="Contoh Dataset",
+        label="Template Upload Dataset",
         data=open(f'{data_sample}'),
         file_name='Sampel Kacang Hijau 2010-2024.csv',
         use_container_width=True
@@ -58,14 +58,15 @@ if 'instruction_shown' not in st.session_state:
 def instruction():
     if not st.session_state.instruction_shown:
         st.write("""
-        **Sumber data** dapat diunduh dari [BDSP](https://bdsp2.pertanian.go.id/bdsp/id/lokasi) atau menggunakan contoh dataset yang diunduh melalui tombol "Contoh Dataset".
+        **Sumber data** dapat diunduh dari [BDSP](https://bdsp2.pertanian.go.id/bdsp/id/lokasi) atau menggunakan contoh 
+                 dataset yang diunduh melalui tombol "Template Upload Dataset".
         
-        Berikut cara menggunakan situs clustering data kacang hijau :
-        1. **Unggah Data**: Klik "Browse files" dan mengunggah dataset berbentuk excel (.csv / .xlsx).
+        Berikut adalah alur penggunaan situs untuk melakukan clustering pada data kacang hijau :
+        1. **Unggah Data**: Klik "Browse files" dan unggah dataset dalam bentuk excel (.csv / .xlsx).
         2. **Pilih Rentang Tahun**: Pilih rentang tahun yang ingin digunakan untuk proses clustering.
-        2. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
-        3. **Mulai Clustering**: Dataset yang diunggah dapat diproses setelah pengguna memencet tombol "Mulai Clustering".
-        4. **Lihat Hasil**: Setelah proses clustering selesai, hasil pengelompokan akan ditampilkan beserta metrik evaluasi.
+        3. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
+        4. **Mulai Clustering**: Dataset yang diunggah dapat diproses setelah pengguna memencet tombol "Mulai Clustering".
+        5. **Lihat Hasil**: Setelah proses clustering selesai, hasil pengelompokan akan ditampilkan beserta metrik evaluasi.
 
         Jenis linkage Agglomerative Hierarchical Clustering :
         - Ward adalah metode yang meminimalkan variansi total dalam cluster.

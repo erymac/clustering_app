@@ -32,31 +32,37 @@ with cols[0]:
     tabs = st.tabs(["Keahlian", "Pendidikan"])
     with tabs[0]:
         st.write("""
-             Saya Lisa, dan saat ini saya adalah mahasiswa semester akhir 
-             Fakultas Teknologi Informasi di Universitas Tarumanagara. Saya memiliki 
-             minat dalam bidang data science dan pengembangan web karena Saya senang 
-             menelaah dan menemukan hal-hal baru dalam data, serta mengubahnya menjadi 
-             informasi baru yang bermanfaat. Saya juga menyukai proses membangun aplikasi 
-             web yang interaktif dan user-friendly.
+            Saya Lisa, dan saat ini saya adalah mahasiswa semester akhir 
+            Fakultas Teknologi Informasi di Universitas Tarumanagara. Saya memiliki 
+            minat dalam bidang data science dan pengembangan web karena saya senang 
+            menelaah dan menemukan hal-hal baru dalam data, serta mengubahnya menjadi 
+            informasi baru yang bermanfaat. Saya juga menyukai proses membangun aplikasi 
+            web yang interaktif dan user-friendly.    
+                
+            Keahlian saya mencakup analisis dan komputasi data menggunakan bahasa pemrograman 
+            R dan SQL, khususnya dalam bidang data mining dan machine learning. Saya juga 
+            berpengalaman dalam menggunakan berbagai library Python untuk tugas data mining, 
+            seperti Pandas, NumPy, dan Scikit-learn, serta untuk visualisasi data dengan Folium 
+            dan Plotly. Keahlian saya juga mencakup penggunaan berbagai aplikasi yang mendukung 
+            tugas data mining, seperti Oracle SQL Developer, Power BI, MATLAB, Visual Studio Code, dan R.
              """)
-        # st.write("""
-        #      Selain pemrograman dengan Python, saya juga memiliki keahlian dalam mengolah 
-        #          data dan visualisasi menggunakan bahasa R.
-        #      """)
     with tabs[1]:
         st.write("""
-             Selama masa sekolah saya di berpendidikan Santo Leo II Jakarta. Saya lulus SMA pada tahun 2018 dan mulai kuliah di 
-                 Universitas Tarumanagara pada tahun 2019 dengan memilih jurusan Teknik Informatika. Saat ini saya belum lulus,
+             Selama masa sekolah saya di berpendidikan Santo Leo II, Jakarta. Saya lulus SMA pada tahun 2019 dan mulai kuliah di 
+                 Universitas Tarumanagara pada tahun yang sama dengan memilih jurusan Teknik Informatika. Saat ini saya belum lulus,
                  tetapi saya sedang menyelesaikan tugas akhir saya melalui projek ini. Saya berharap dapat lulus pada tahun 2025.
              """)
 with cols[1]:
-    column = st.columns([1,4,1], gap=None)
+    column = st.columns([1,4,1], gap="large")
     with column[1]:
         st.image("app/images/profile.png", width=150)
     st.write("""
-            Kontak :  
+              Saya adalah mahasiswa aktif di Universitas Tarumanagara, Fakultas Teknologi Informasi, 
+             jurusan Teknik Informatika. Saya lahir di Jakarta pada tanggal 16 Agustus 2001.
+               
+            **Kontak** :  
             lisakurniadi16@gmail.com  
-            Telepon: +62 812 9620 7168
+            Telepon: 0812-9620-7168
             """)
 
 

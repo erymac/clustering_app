@@ -27,9 +27,18 @@ cols = st.columns([3,1])
 with cols[0]:
     tabs = st.tabs(["Latar Belakang & Informasi Terkait", "Mengenai Data", "Cara Kerja Situs"])
     with tabs[0]:
-        with st.expander("Kacang Hijau"):
+        with st.expander("Apa itu kacang hijau?"):
+            column = st.columns(2)
+            with column[0]:
+                st.image("app/images/kacang_hijau.jpg", caption="Kacang Hijau (Sumber: Alodokter)", width=385)
+            with column[1]:
+                st.image("app/images/tanaman-kacang-hijau.jpg", caption="Tanaman Kacang Hijau (Sumber: Kompas)", width=300)
             st.write("""
-            Kacang hijau adalah salah satu jenis kacang-kacangan / legum yang umumnya tumbuh di daerah tropis.
+            Kacang hijau adalah jenis tanaman kacang / legum dengan biji yang umumnya berwarna hijau dan tumbuh di daerah tropis.
+            Kacang hijau kaya akan protein, serat, vitamin, dan mineral, serta mengandung antioksidan yang bermanfaat untuk kesehatan.
+            Selain itu, kacang hijau juga dapat membantu mengontrol kadar gula darah, menurunkan kolesterol, dan 
+            mendukung kesehatan pencernaan. Di Indonesia, kacang hijau sering digunakan dalam berbagai hidangan tradisional, 
+            seperti bubur kacang hijau, es kacang hijau, dan kue-kue tradisional lainnya.
             """)
         with st.expander("Mengenai website dan tujuannya"):
             st.write("""
@@ -109,9 +118,9 @@ with cols[0]:
         st.write("""
             1. **Unggah Data**: Klik "Browse files" dan mengunggah dataset berbentuk excel (.csv / .xlsx).
             2. **Pilih Rentang Tahun**: Pilih rentang tahun yang ingin digunakan untuk proses clustering.
-            2. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
-            3. **Mulai Clustering**: Dataset yang diunggah dapat diproses setelah pengguna memencet tombol "Mulai Clustering".
-            4. **Lihat Hasil**: Setelah proses clustering selesai, hasil pengelompokan akan ditampilkan beserta metrik evaluasi.
+            3. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
+            4. **Mulai Clustering**: Dataset yang diunggah dapat diproses setelah pengguna memencet tombol "Mulai Clustering".
+            5. **Lihat Hasil**: Setelah proses clustering selesai, hasil pengelompokan akan ditampilkan beserta metrik evaluasi.
 
             Jenis linkage Agglomerative Hierarchical Clustering :
             - Ward adalah metode yang meminimalkan variansi total dalam cluster.

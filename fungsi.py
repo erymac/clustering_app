@@ -247,13 +247,42 @@ def AHC(data, n_cluster, linkage): # Fungsi metode AHC mengembalikan skor silhou
     return df_ahc, dfwaktu_ahc, round(silhouette_temp, 3), round(db_index_temp, 3), avg_silhouette_total, num_cluster, labels
 
 def fig_evaluate(df, metode):
-    fig_bkmeans = px.line(df,
-                    markers=True,
-                    color_discrete_map={
-                        'Silhouette Score': '#BD4B46',
-                        'DBI Score': '#8D957E'}, 
-                        # title=f"Skor Silhouette dan Davies-Bouldin Index {metode}"
+    df_reset = df.reset_index()
+
+    # Now you can plot using the 'Cluster' column explicitly
+    fig_bkmeans = px.line(df_reset,
+                        x='Cluster',  # Use 'Cluster' as the x-axis
+                        y=['Silhouette Score', 'DBI Score'],
+                        markers=True,
+                        color_discrete_map={
+                            'Silhouette Score': '#BD4B46',
+                            'DBI Score': '#8D957E'},
                         )
+
+    # Update the layout to ensure whole number ticks on the x-axis
+    fig_bkmeans.update_layout(
+        xaxis=dict(
+            tickmode='array',
+            tickvals=df_reset['Cluster'].unique(),
+            ticktext=[str(int(x)) for x in df_reset['Cluster'].unique()]  # Force whole numbers
+        )
+    )
+
+    # Tambah gridlines pada x-axis
+    fig_bkmeans.update_xaxes(
+        showgrid=True,
+        gridcolor='lightgrey',
+        griddash='solid'
+    )
+
+    # Tambah gridlines pada y-axis
+    fig_bkmeans.update_yaxes(
+        showgrid=True,
+        gridcolor='lightgrey',
+        griddash='solid'
+    )
+
+    # Display the plot
     st.plotly_chart(fig_bkmeans, use_container_width=True)
 
 def linechart_evaluation (df_bkmeans, df_ahc): # untuk evaluasi perbandingan kedua metode
@@ -380,6 +409,21 @@ def visualize_silhouette(data, cluster_labels, n_clusters, silhouette_avg, metod
         yaxis=dict(title='Label Cluster', showticklabels=False),
         # height=450,
         # margin=dict(l=50, r=50, t=80, b=50)
+    )
+
+    # Tambah gridlines pada x-axis
+    fig.update_xaxes(
+        showgrid=True,
+        gridcolor='lightgrey',
+        griddash='solid'
+    )
+
+    # Tambah gridlines pada y-axis
+    fig.update_yaxes(
+        showgrid=True,
+        gridcolor='lightgrey',
+        gridwidth=0.2,
+        griddash='solid'
     )
 
     st.plotly_chart(fig, use_container_width=True)
@@ -825,14 +869,6 @@ def compare_cluster(df, nama_kolom, height=900, direction='vertical'):
     fitur = ['Luas Panen (Hektar)', 'Produksi (Ton)', 'Produktivitas (Kuintal/Ha)']
     prefix_fitur = ['Luas Panen 2', 'Produksi 2', 'Produktivitas 2']
 
-    # cluster_colors = {
-    #     0: '#BE2A3E',
-    #     1: '#F88F4D',
-    #     2: '#F4D166',
-    #     3: "#90B960",
-    #     4: '#22763F'
-    # }
-
     if direction == 'vertical':
         rows = 3
         cols = 1
@@ -1043,6 +1079,7 @@ def proses_clustering(df, metode, cluster_labels, cluster_optimal, cluster_optio
 
     # PERBANDINGAN FITUR SETIAP CLUSTER
     # st.subheader("Hasil Clustering", divider=True, anchor="hasil_clustering")
+    df = sort_cluster(df)
     st.write("##### Perbandingan Fitur Setiap Cluster")
     compare_cluster(df, 'Cluster', height=400, direction='horizontal')
     
@@ -1065,9 +1102,9 @@ def proses_clustering(df, metode, cluster_labels, cluster_optimal, cluster_optio
 def greet():
     currentTime = datetime.datetime.now()
 
-    if currentTime.hour < 12:
+    if currentTime.hour < 10:
         st.subheader('Selamat pagi!')
-    elif 12 <= currentTime.hour < 16:
+    elif 10 <= currentTime.hour < 16:
         st.subheader('Selamat siang!')
     elif 16 <= currentTime.hour < 19:
         st.subheader('Selamat sore!')
