@@ -42,14 +42,12 @@ with cols[0]:
             """)
         with st.expander("Mengenai website dan tujuannya"):
             st.write("""
-            Website ini dirancang untuk mengelompokkan data hasil panen kacang hijau berdasarkan tingkat (tinggi / rendah) 
+            Website ini dirancang untuk mengelompokkan data hasil panen kacang hijau berdasarkan tingkat tinggi / rendahnya 
                     luas panen, produksi, dan produktivitas. Pengelompokan ini dilakukan pada tingkat kabupaten/kota di 
                     seluruh wilayah Indonesia. Dengan menggunakan metode Bisecting K-Means dan Agglomerative Hierarchical 
                     Clustering, website ini bertujuan untuk memberikan wawasan yang lebih baik tentang pola dan tren dalam 
-                    data pertanian kacang hijau. Hasil dari pengelompokan ini diharapkan dapat membantu petani, pembuat 
-                    kebijakan, dan pemangku kepentingan lainnya dalam membuat keputusan terkait dengan produksi kacang hijau.
+                    data pertanian kacang hijau.
             """)
-        with st.expander("Tujuan pengelompokan data"):
             st.write("""
             Tujuan utama dari pengelompokan data hasil panen kacang hijau ini adalah untuk mengidentifikasi pola dan 
                     tren dalam produksi kacang hijau di berbagai wilayah di Indonesia. Dengan mengelompokkan data berdasarkan 
