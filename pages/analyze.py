@@ -74,7 +74,10 @@ if uploaded_file is not None:
     try:
         validate_columns_and_data(dataframe_mentah)
         st.success(":green[:material/done:] Data berhasil divalidasi dan diproses.")
-        df_copy = preprocess_data(dataframe_mentah)
+        # df_copy = preprocess_data(dataframe_mentah)
+        df_copy = columns_to_drop(dataframe_mentah) # temp untuk menampilkan tabel dataframe asli
+        df_copy = data_selection (df_copy)
+        df_copy = df_copy.reset_index()
         df_array = df_copy.drop(['Lokasi'], axis=1)
         df_array = df_array.values
 
