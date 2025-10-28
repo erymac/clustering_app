@@ -1081,7 +1081,9 @@ def proses_clustering(df, metode, cluster_labels, cluster_optimal, cluster_optio
     # st.subheader("Hasil Clustering", divider=True, anchor="hasil_clustering")
     df = sort_cluster(df)
     st.write("##### Perbandingan Fitur Setiap Cluster")
-    compare_cluster(df, 'Cluster', height=400, direction='horizontal')
+    df_temp['Cluster'] = cluster_labels
+    df_temp = sort_cluster(df_temp)
+    compare_cluster(df_temp, 'Cluster', height=400, direction='horizontal')
     
     st.write("##### Tabel Data Hasil Clustering")
     df_temp = cluster_and_category_result(df_temp, df['Cluster'], cluster_optimal, 'Kategori', 'Cluster')
@@ -1167,21 +1169,22 @@ def proses_clustering_perbandingan(linkage, df_copy, df_temp, df_array, n_cluste
         visualize_silhouette(df_array, df_copy['Cluster AHC'], bestcluster_ahc, silhouette_ahc, metode2)
 
     # PERBANDINGAN FITUR SETIAP CLUSTER
+    df_temp = cluster_and_category_result(df_temp, df_copy['Cluster BKM'], bestcluster_bkmeans, 'Kategori (Bisecting K-Means)', 'Cluster BKM')
+    df_temp = cluster_and_category_result(df_temp, df_copy['Cluster AHC'], bestcluster_ahc, 'Kategori (Agglomerative Clustering)', 'Cluster AHC')
+    df_temp = avg_features(df_temp)
     st.subheader("Perbandingan Fitur Tiap Cluster", divider=True, anchor="perbandingan_cluster")
     subsubcol = st.columns(2, gap="medium")
     with subsubcol[0]:
         st.write("##### Bisecting K-Means")
-        compare_cluster(df_copy, 'Cluster BKM')
+        compare_cluster(df_temp, 'Cluster BKM')
     with subsubcol[1]:
         st.write("##### Agglomerative Hierarchical Clustering")
-        compare_cluster(df_copy, 'Cluster AHC')
+        compare_cluster(df_temp, 'Cluster AHC')
 
     # HASIL CLUSTERING ALGORITMA BISECTING K-MEANS DAN AGGLOMERATIVE HIERARCHICAL CLUSTERING
     st.subheader("Hasil Clustering", divider=True, anchor="hasil_clustering")
     st.write("##### Tabel Kategori Hasil Clustering")
-    df_temp = cluster_and_category_result(df_temp, df_copy['Cluster BKM'], bestcluster_bkmeans, 'Kategori (Bisecting K-Means)', 'Cluster BKM')
-    df_temp = cluster_and_category_result(df_temp, df_copy['Cluster AHC'], bestcluster_ahc, 'Kategori (Agglomerative Clustering)', 'Cluster AHC')
-    df_temp = avg_features(df_temp)
+    
     df_temp = df_temp.drop(columns=df_temp.filter(regex='20', axis=1).columns)
     st.dataframe(df_temp[['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Cluster BKM',
                             'Kategori (Bisecting K-Means)', 'Cluster AHC', 'Kategori (Agglomerative Clustering)']], hide_index=True)
