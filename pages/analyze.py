@@ -84,7 +84,7 @@ if uploaded_file is not None:
         df_copy = avg_features(df_copy)
         dataframe_mentah = avg_features(dataframe_mentah)
         with st.spinner("Memproses data..."):
-            cols = st.columns(2, gap="small", vertical_alignment="top")
+            cols = st.columns(2, gap="medium", vertical_alignment="top")
             with cols[0]:
                 heatmap_corr(df_copy[['Luas Panen', 'Produksi', 'Produktivitas']])
             with cols[1]:
@@ -95,7 +95,7 @@ if uploaded_file is not None:
                 st.dataframe(dataframe_mentah[['Provinsi', 'Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas']], hide_index=True)
 
         with st.spinner("Memproses data..."):
-            cols = st.columns(2, gap="small", vertical_alignment="top")
+            cols = st.columns(2, gap="medium", vertical_alignment="top")
             with cols[0]:
                 year_pattern = r' (\d{4})$'
                 metric_cols = [col for col in df_copy.columns 
