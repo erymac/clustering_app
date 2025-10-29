@@ -1103,6 +1103,7 @@ def proses_clustering(df, metode, cluster_labels, cluster_optimal, cluster_optio
 
 def greet():
     currentTime = datetime.datetime.now()
+    st.write(currentTime)
 
     if currentTime.hour < 10:
         st.subheader('Selamat pagi!')
