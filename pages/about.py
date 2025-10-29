@@ -98,18 +98,23 @@ with cols[0]:
 
     with tabs[1]:
         with st.expander("Mengenai Sumber Data"):
-            # st.write("Dataset yang digunakan pada website ini dapat diperoleh dari situs (Basis Data " \
-            # "Statistik Pertanian) yang dimiliki oleh Kementrian Pertanian Republik Indonesia. Berikut syarat dataset :")
             st.write("""
             Dataset dapat diperoleh dari situs (Basis Data Statistik Pertanian) dengan link https://bdsp2.pertanian.go.id/bdsp/id/lokasi 
                     milik Kementrian Pertanian Republik Indonesia. Pilih **Subsektor** Tanaman Pangan > **Komoditas** Kacang Hijau > 
                     **Indikator** Luas Panen, Produksi, Produktivitas > **Level** Kabupaten. Pilih **Satuan** yang sesuai dengan 
                     Indikator dan **Tahun** dari 2010 ke atas. Klik **Cari** dan unduh data dengan menekan tombol **Excel**.
             """)
+            st.write("""
+            Dataset sampel juga dapat diunduh melalui tombol "Template Upload Dataset" pada halaman utama situs ini.
+            """)
         with st.expander("Syarat / Bentuk Dataset"):
             st.write("""
+            Template dataset dapat dilihat pada file "Sampel Kacang Hijau 2010-2024.csv" yang dapat diunduh melalui tombol 
+                    "Template Upload Dataset" pada halaman utama situs ini.
+            """)
+            st.write("""
             Dataset yang diunggah harus :
-            1. Memiliki kolom **Lokasi**, **Luas Panen**, **Produksi**, dan **Produktivitas**
+            1. Memiliki kolom **Lokasi**, **Luas Panen** [tahun], **Produksi** [tahun], dan **Produktivitas** [tahun]
             2. Semua kolom selain Lokasi berisi **numerik**
             """)
     with tabs[2]:
@@ -126,7 +131,7 @@ with cols[0]:
             - Average adalah metode yang meminimalkan jarak rata-rata antara titik dalam cluster.
             - Single adalah metode yang meminimalkan jarak minimum antara titik dalam cluster.
 
-            Setiap visualisasi dan tabel yang ditampilkan dapat diunduh dengan menekan tombol :grey[:material/download:] yang tersedia pada 
+            Setiap visualisasi dan tabel yang ditampilkan dapat diunduh dengan memencet tombol :grey[:material/download:] yang tersedia pada 
                  pop-up yang muncul ketika mengarahkan kursor ke visualisasi.
             """)
     

@@ -595,7 +595,7 @@ def show_map_explanation():
     with st.expander("Lihat penjelasan"):
         st.write('''
             Peta ini menggambarkan wilayah di Indonesia yang sudah dibagi berdasarkan jumlah cluster yang Anda input.
-            Label tinggi / rendah pada peta adalah berdasarkan tingkat produksi.
+            Label tinggi / rendah pada peta adalah berdasarkan tingkat luas panen, produksi, dan produktivitas.
         ''')
 
 def graph_comparison(data):
