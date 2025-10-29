@@ -1102,8 +1102,8 @@ def proses_clustering(df, metode, cluster_labels, cluster_optimal, cluster_optio
         show_n_cluster(df, df["Cluster"], metode)
 
 def greet():
-    currentTime = datetime.datetime.now()
-    st.write(currentTime)
+    currentTime = datetime.datetime.utcnow()
+    currentTime = currentTime + datetime.timedelta(hours=7)  # Waktu Indonesia Barat (WIB)
 
     if currentTime.hour < 10:
         st.subheader('Selamat pagi!')
