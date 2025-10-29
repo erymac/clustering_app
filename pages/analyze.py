@@ -73,7 +73,8 @@ if dataframe_mentah is not None:
 if uploaded_file is not None:
     try:
         validate_columns_and_data(dataframe_mentah)
-        st.success(":green[:material/done:] Data berhasil divalidasi dan diproses.")
+        # st.success(":green[:material/done:] Data berhasil divalidasi dan diproses.")
+        st.badge("Data berhasil divalidasi dan diproses.", icon=":material/check:", color="green")
         # df_copy = preprocess_data(dataframe_mentah)
         df_copy = columns_to_drop(dataframe_mentah) # temp untuk menampilkan tabel dataframe asli
         df_copy = data_selection (df_copy)
