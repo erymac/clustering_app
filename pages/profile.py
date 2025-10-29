@@ -21,7 +21,7 @@ page = query_params.get("page", "home")  # Default to 'Home' if none
 show_navbar()
 
 st.markdown('''<h1 class="custom-header" style="font-size:47px; align: center; color: black; margin-bottom: 36px; font-family: Inter;">
-            Profil
+            Profile
             </h1>''',
             unsafe_allow_html=True)
 
