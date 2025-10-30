@@ -306,6 +306,20 @@ def linechart_evaluation (df_bkmeans, df_ahc): # untuk evaluasi perbandingan ked
         title_font_size=20
     )
 
+    # Tambah gridlines pada x-axis
+    fig_silhouette.update_xaxes(
+        showgrid=True,
+        gridcolor='lightgrey',
+        griddash='solid'
+    )
+
+    # Tambah gridlines pada y-axis
+    fig_silhouette.update_yaxes(
+        showgrid=True,
+        gridcolor='lightgrey',
+        griddash='solid'
+    )
+
     # Plot DBI Score
     fig_dbi = px.line(
         method_dataframe,
@@ -322,6 +336,20 @@ def linechart_evaluation (df_bkmeans, df_ahc): # untuk evaluasi perbandingan ked
     fig_dbi.update_layout(
         title=f'DBI Score',
         title_font_size=20
+    )
+
+    # Tambah gridlines pada x-axis
+    fig_dbi.update_xaxes(
+        showgrid=True,
+        gridcolor='lightgrey',
+        griddash='solid'
+    )
+
+    # Tambah gridlines pada y-axis
+    fig_dbi.update_yaxes(
+        showgrid=True,
+        gridcolor='lightgrey',
+        griddash='solid'
     )
 
     return fig_silhouette, fig_dbi
