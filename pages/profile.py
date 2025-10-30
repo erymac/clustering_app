@@ -18,17 +18,17 @@ show_navbar()
 home = st.Page("skripsi.py")
 analyze = st.Page("pages/analyze.py")
 about = st.Page("pages/about.py")
-about = st.Page("pages/profile.py")
+profile = st.Page("pages/profile.py")
 
 page = what_page()
 if page == "home":
-    pg = st.navigation([home, analyze, about, about], home)
+    pg = st.navigation([home, analyze, about, profile])
 elif page == "analyze":
-    pg = st.navigation([home, analyze, about, about], analyze)
+    pg = st.navigation([home, analyze, about, profile])
 elif page == "about":
-    pg = st.navigation([home, analyze, about, about], about)
+    pg = st.navigation([home, analyze, about, profile])
 elif page == "profile":
-    pg = st.navigation([home, analyze, about, about], about)
+    pg = st.navigation([home, analyze, about, profile])
 
 pg.run()
 
