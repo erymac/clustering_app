@@ -10,7 +10,7 @@ import io
 import streamlit as st
 import pandas as pd
 
-show_navbar()
+# show_navbar()
 
 st.set_page_config(
     layout="wide",
