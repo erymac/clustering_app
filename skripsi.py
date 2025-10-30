@@ -10,6 +10,8 @@ import io
 import streamlit as st
 import pandas as pd
 
+show_navbar()
+
 st.set_page_config(
     layout="wide",
     page_title="Clustering Data Kacang Hijau",
@@ -24,8 +26,6 @@ st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap
 # Get page from URL query params
 query_params = st.query_params
 page = query_params.get("page", "home")  
-
-show_navbar()
 
 #Home Page
 st.markdown("")

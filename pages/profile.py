@@ -3,6 +3,9 @@ from fungsi import greet
 from utils import show_navbar, hide_sidebar, show_footer, what_page
 import os
 
+show_navbar()
+page = what_page()
+
 st.set_page_config(
     layout="wide", 
     page_title="Profile",
@@ -17,9 +20,6 @@ st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap
 # # Get page from URL query params
 # query_params = st.query_params
 # page = query_params.get("page", "home")  # Default to 'Home' if none
-
-show_navbar()
-# what_page()
 
 st.markdown('''<h1 class="custom-header" style="font-size:47px; align: center; color: black; margin-bottom: 36px; font-family: Inter;">
             Profile

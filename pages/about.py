@@ -1,6 +1,9 @@
 import streamlit as st
 from utils import show_navbar, hide_sidebar, show_footer, what_page
 
+show_navbar()
+page = what_page()
+
 st.set_page_config(
     layout="wide", 
     page_title="About",
@@ -18,9 +21,6 @@ def content():
 # # Get page from URL query params
 # query_params = st.query_params
 # page = query_params.get("page", "home")  # Default to 'Home' if none
-
-show_navbar()
-# what_page()
 
 st.title('Tentang Situs Ini')
 st.markdown("<br><br>", unsafe_allow_html=True)
