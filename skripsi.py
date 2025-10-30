@@ -2,7 +2,7 @@ from fungsi import (
     proses_clustering, validate_columns_and_data, preprocess_data, columns_to_drop, data_selection, BKMeans, AHC,
     normalize, proses_clustering_perbandingan
     )
-from utils import show_navbar, hide_sidebar, show_footer
+from utils import show_navbar, hide_sidebar, show_footer, what_page
 import re
 import csv
 import os
@@ -10,8 +10,16 @@ import io
 import streamlit as st
 import pandas as pd
 
-# hide_sidebar()
-# show_navbar()
+hide_sidebar()
+show_navbar()
+
+page = what_page()
+if page == "analyze":
+    st.switch_page("pages/analyze.py")
+elif page == "about":
+    st.switch_page("pages/about.py")
+elif page == "profile":
+    st.switch_page("pages/profile.py")
 
 st.set_page_config(
     layout="wide",
