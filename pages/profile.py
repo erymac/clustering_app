@@ -14,9 +14,9 @@ show_navbar()
 # elif page == "profile":
 #     st.switch_page("pages/profile.py")
 
-# # Jika halaman yang diminta belum ada di session_state, set default ke 'home'
-# if 'page' not in st.session_state:
-#     st.session_state.page = 'home'
+# Jika halaman yang diminta belum ada di session_state, set default ke 'home'
+if 'page' not in st.session_state:
+    st.session_state.page = 'home'
 
 # Mengambil halaman yang aktif dari session_state
 page = st.session_state.page
