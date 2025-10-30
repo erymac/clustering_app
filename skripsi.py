@@ -21,23 +21,22 @@ show_navbar()
 # elif page == "profile":
 #     st.switch_page("pages/profile.py")
 
-# Define the pages
-home = st.Page("skripsi.py")
-analyze = st.Page("pages/analyze.py")
-about = st.Page("pages/about.py")
-profile = st.Page("pages/profile.py")
+# Jika halaman yang diminta belum ada di session_state, set default ke 'home'
+if 'page' not in st.session_state:
+    st.session_state.page = 'home'
 
-page = what_page()
-if page == "home":
-    pg = st.navigation([home, analyze, about, profile])
-elif page == "analyze":
-    pg = st.navigation([home, analyze, about, profile])
-elif page == "about":
-    pg = st.navigation([home, analyze, about, profile])
-elif page == "profile":
-    pg = st.navigation([home, analyze, about, profile])
+# Mengambil halaman yang aktif dari session_state
+page = st.session_state.page
 
-pg.run()
+# Memilih halaman berdasarkan session_state
+if page == 'home':
+    st.switch_page("skripsi.py")
+elif page == 'analyze':
+    st.switch_page("pages/analyze.py")
+elif page == 'about':
+    st.switch_page("pages/about.py")
+elif page == 'profile':
+    st.switch_page("pages/profile.py")
 
 st.set_page_config(
     layout="wide",
