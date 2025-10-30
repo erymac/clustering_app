@@ -26,7 +26,7 @@ st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap
 # page = query_params.get("page", "home")  # Default to 'Home' if none
 
 show_navbar()
-what_page()
+# what_page()
 
 st.markdown("")
 

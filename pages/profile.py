@@ -19,7 +19,7 @@ st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap
 # page = query_params.get("page", "home")  # Default to 'Home' if none
 
 show_navbar()
-what_page()
+# what_page()
 
 st.markdown('''<h1 class="custom-header" style="font-size:47px; align: center; color: black; margin-bottom: 36px; font-family: Inter;">
             Profile

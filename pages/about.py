@@ -20,7 +20,7 @@ def content():
 # page = query_params.get("page", "home")  # Default to 'Home' if none
 
 show_navbar()
-what_page()
+# what_page()
 
 st.title('Tentang Situs Ini')
 st.markdown("<br><br>", unsafe_allow_html=True)
