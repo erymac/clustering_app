@@ -10,14 +10,8 @@ import io
 import streamlit as st
 import pandas as pd
 
-hide_sidebar()
-show_navbar()
-page = st.query_params.get("page", "home")
-
-if page == "analyze":
-    st.switch_page("pages/analyze.py")
-elif page == "about":
-    st.switch_page("pages/about.py")
+# hide_sidebar()
+# show_navbar()
 
 st.set_page_config(
     layout="wide",
