@@ -1,16 +1,24 @@
 import streamlit as st
 from fungsi import greet
-from utils import show_navbar, hide_sidebar, show_footer
+from utils import show_navbar, hide_sidebar, show_footer, what_page
 import os
 
+hide_sidebar()
 show_navbar()
+
+page = what_page()
+if page == "analyze":
+    st.switch_page("pages/analyze.py")
+elif page == "about":
+    st.switch_page("pages/about.py")
+elif page == "profile":
+    st.switch_page("pages/profile.py")
 
 st.set_page_config(
     layout="wide", 
     page_title="Profile",
     page_icon="app/images/kacang_hijau_icon.png"
     )
-hide_sidebar()
 
 with open( "app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
