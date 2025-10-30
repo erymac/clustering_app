@@ -20,13 +20,13 @@ profile = st.Page("pages/profile.py")
 
 page = what_page()
 if page == "home":
-    pg = st.navigation([home, analyze, about, profile], home)
+    pg = st.navigation([home, analyze, about, profile])
 elif page == "analyze":
-    pg = st.navigation([home, analyze, about, profile], analyze)
+    pg = st.navigation([home, analyze, about, profile])
 elif page == "about":
-    pg = st.navigation([home, analyze, about, profile], about)
+    pg = st.navigation([home, analyze, about, profile])
 elif page == "profile":
-    pg = st.navigation([home, analyze, about, profile], profile)
+    pg = st.navigation([home, analyze, about, profile])
 
 pg.run()
 
