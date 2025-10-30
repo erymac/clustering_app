@@ -10,14 +10,14 @@ import io
 import streamlit as st
 import pandas as pd
 
-# show_navbar()
+show_navbar()
 
 st.set_page_config(
     layout="wide",
     page_title="Clustering Data Kacang Hijau",
     page_icon="app/images/kacang_hijau_icon.png"
 )
-# hide_sidebar()
+hide_sidebar()
 
 with open("app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
