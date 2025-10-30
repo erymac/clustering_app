@@ -8,10 +8,9 @@ import io
 import re
 import os
 import pandas as pd
-from utils import show_navbar, hide_sidebar, show_footer, what_page
+from utils import show_navbar, hide_sidebar, show_footer
 
 show_navbar()
-page = what_page()
 
 st.set_page_config(
     layout="wide", 
@@ -23,10 +22,6 @@ hide_sidebar()
 with open( "app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous">', unsafe_allow_html=True)
-
-# # Get page from URL query params
-# query_params = st.query_params
-# page = query_params.get("page", "home")  # Default to 'Home' if none
 
 st.markdown("")
 

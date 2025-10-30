@@ -1,8 +1,7 @@
 import streamlit as st
-from utils import show_navbar, hide_sidebar, show_footer, what_page
+from utils import show_navbar, hide_sidebar, show_footer
 
 show_navbar()
-page = what_page()
 
 st.set_page_config(
     layout="wide", 
@@ -17,10 +16,6 @@ st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap
 
 def content():
     st.write("Pelajari lebih lanjut mengenai situs ini.")
-
-# # Get page from URL query params
-# query_params = st.query_params
-# page = query_params.get("page", "home")  # Default to 'Home' if none
 
 st.title('Tentang Situs Ini')
 st.markdown("<br><br>", unsafe_allow_html=True)
