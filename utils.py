@@ -8,7 +8,7 @@ def show_navbar():
             <div class='nav-text navbar-nav'>
                 <ul class='nav justify-content-end'>
                     <li class='nav-item'>
-                        <a class='nav-link' href='/home?page=home'>Home</a>
+                        <a class='nav-link' href='/'>Home</a>
                     </li>
                     <li class='nav-item'>
                         <a class='nav-link' href='/analyze?page=analyze'>Analisis</a>
