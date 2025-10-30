@@ -17,7 +17,7 @@ st.set_page_config(
     page_title="Clustering Data Kacang Hijau",
     page_icon="app/images/kacang_hijau_icon.png"
 )
-hide_sidebar()
+# hide_sidebar()
 
 with open("app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
