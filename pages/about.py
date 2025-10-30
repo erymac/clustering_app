@@ -14,9 +14,9 @@ show_navbar()
 
 # Define the pages
 home = st.Page("skripsi.py")
-analyze = st.Page("analyze.py")
-about = st.Page("about.py")
-about = st.Page("profile.py")
+analyze = st.Page("pages/analyze.py")
+about = st.Page("pages/about.py")
+about = st.Page("pages/profile.py")
 
 page = what_page()
 if page == "home":
