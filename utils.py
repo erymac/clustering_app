@@ -8,16 +8,16 @@ def show_navbar():
             <div class='nav-text navbar-nav'>
                 <ul class='nav justify-content-end'>
                     <li class='nav-item'>
-                        <a class='nav-link' onClick="window.parent.location.href='/'">Home</a>
+                        <a class='nav-link' href='/home'>Home</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link' onClick="window.parent.location.href='/analyze'">Analisis</a>
+                        <a class='nav-link' href='/analyze'>Analisis</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link' onClick="window.parent.location.href='/about'">Tentang</a>
+                        <a class='nav-link' href='/about'>Tentang</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link' onClick="window.parent.location.href='/profile'">Profile</a>
+                        <a class='nav-link' href='/profile'>Profile</a>
                     </li>
                 </ul>
             </div>
@@ -28,17 +28,16 @@ def show_navbar():
     st.markdown("""
         <style>
             .navbar-dark .navbar-nav .nav-link {
-                color: #f0e0b1;
-                cursor: pointer;
+                color: #f0e0b1;  /* Off-white text color */
                 transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
             }
 
             .navbar-dark .navbar-nav .nav-link:hover {
-                color: #ff6f61;
+                color: #ff6f61;  /* Bright orange on hover */
             }
 
             .navbar {
-                padding-top: 20px;
+                padding-top: 20px;  /* Adjust padding-top to make the navbar thicker at the top */
             }
         </style>
     """, unsafe_allow_html=True)
@@ -47,8 +46,9 @@ def show_navbar():
 
 
 def what_page():
+    # Get page from URL query params
     query_params = st.query_params
-    page = query_params.get("page", ["home"])[0]  # Default ke 'home' kalau parameter tidak ada
+    page = query_params.get("page", ["home"])[0]  # Default ke 'home' jika parameter tidak ada
     return page
 
 def hide_sidebar():
