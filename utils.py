@@ -8,16 +8,16 @@ def show_navbar():
             <div class='nav-text navbar-nav'>
                 <ul class='nav justify-content-end'>
                     <li class='nav-item'>
-                        <a class='nav-link' href='/'>Home</a>
+                        <a class='nav-link' onClick="window.parent.location.href='/'">Home</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link' href='/analyze'>Analisis</a>
+                        <a class='nav-link' onClick="window.parent.location.href='/analyze'">Analisis</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link' href='/about'>Tentang</a>
+                        <a class='nav-link' onClick="window.parent.location.href='/about'">Tentang</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link' href='/profile'>Profile</a>
+                        <a class='nav-link' onClick="window.parent.location.href='/profile'">Profile</a>
                     </li>
                 </ul>
             </div>
@@ -28,16 +28,17 @@ def show_navbar():
     st.markdown("""
         <style>
             .navbar-dark .navbar-nav .nav-link {
-                color: #f0e0b1;  /* Off-white text color */
+                color: #f0e0b1;
+                cursor: pointer;
                 transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
             }
 
             .navbar-dark .navbar-nav .nav-link:hover {
-                color: #ff6f61;  /* Bright orange on hover */
+                color: #ff6f61;
             }
 
             .navbar {
-                padding-top: 20px;  /* Adjust padding-top to make the navbar thicker at the top */
+                padding-top: 20px;
             }
         </style>
     """, unsafe_allow_html=True)
