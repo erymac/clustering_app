@@ -8,7 +8,7 @@ import io
 import re
 import os
 import pandas as pd
-from utils import show_navbar, hide_sidebar, show_footer
+from utils import show_navbar, hide_sidebar, show_footer, what_page
 
 st.set_page_config(
     layout="wide", 
@@ -26,6 +26,7 @@ query_params = st.query_params
 page = query_params.get("page", "home")  # Default to 'Home' if none
 
 show_navbar()
+what_page()
 
 st.markdown("")
 
