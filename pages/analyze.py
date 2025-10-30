@@ -21,9 +21,9 @@ with open( "app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous">', unsafe_allow_html=True)
 
-# Get page from URL query params
-query_params = st.query_params
-page = query_params.get("page", "home")  # Default to 'Home' if none
+# # Get page from URL query params
+# query_params = st.query_params
+# page = query_params.get("page", "home")  # Default to 'Home' if none
 
 show_navbar()
 what_page()

@@ -15,9 +15,9 @@ st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap
 def content():
     st.write("Pelajari lebih lanjut mengenai situs ini.")
 
-# Get page from URL query params
-query_params = st.query_params
-page = query_params.get("page", "home")  # Default to 'Home' if none
+# # Get page from URL query params
+# query_params = st.query_params
+# page = query_params.get("page", "home")  # Default to 'Home' if none
 
 show_navbar()
 what_page()
