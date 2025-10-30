@@ -47,8 +47,7 @@ def show_navbar():
 
 
 def what_page():
-    # query_params = st.query_params
-    query_params = st.experimental_get_query_params()
+    query_params = st.query_params
     page = query_params.get("page", ["home"])[0]  # Default ke 'home' kalau parameter tidak ada
     return page
 
