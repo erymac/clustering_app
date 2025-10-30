@@ -4,12 +4,29 @@ from utils import show_navbar, hide_sidebar, show_footer, what_page
 hide_sidebar()
 show_navbar()
 
-page = what_page()
-if page == "analyze":
+# page = what_page()
+# if page == "analyze":
+#     st.switch_page("pages/analyze.py")
+# elif page == "about":
+#     st.switch_page("pages/about.py")
+# elif page == "profile":
+#     st.switch_page("pages/profile.py")
+
+# # Jika halaman yang diminta belum ada di session_state, set default ke 'home'
+# if 'page' not in st.session_state:
+#     st.session_state.page = 'home'
+
+# Mengambil halaman yang aktif dari session_state
+page = st.session_state.page
+
+# Memilih halaman berdasarkan session_state
+if page == 'home':
+    st.switch_page("pages/home.py")
+elif page == 'analyze':
     st.switch_page("pages/analyze.py")
-elif page == "about":
+elif page == 'about':
     st.switch_page("pages/about.py")
-elif page == "profile":
+elif page == 'profile':
     st.switch_page("pages/profile.py")
 
 st.set_page_config(
@@ -21,9 +38,6 @@ st.set_page_config(
 with open( "app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous">', unsafe_allow_html=True)
-
-def content():
-    st.write("Pelajari lebih lanjut mengenai situs ini.")
 
 st.title('Tentang Situs Ini')
 st.markdown("<br><br>", unsafe_allow_html=True)
