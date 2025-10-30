@@ -12,6 +12,12 @@ import pandas as pd
 
 hide_sidebar()
 show_navbar()
+page = st.query_params.get("page", "home")
+
+if page == "analyze":
+    st.switch_page("pages/analyze.py")
+elif page == "about":
+    st.switch_page("pages/about.py")
 
 st.set_page_config(
     layout="wide",
