@@ -30,7 +30,7 @@ page = st.session_state.page
 
 # Memilih halaman berdasarkan session_state
 if page == 'home':
-    st.switch_page("pages/home.py")
+    st.switch_page("skripsi.py")
 elif page == 'analyze':
     st.switch_page("pages/analyze.py")
 elif page == 'about':
