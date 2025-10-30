@@ -8,7 +8,7 @@ def show_navbar():
             <div class='nav-text navbar-nav'>
                 <ul class='nav justify-content-end'>
                     <li class='nav-item'>
-                        <a class='nav-link' href='/home'>Home</a>
+                        <a class='nav-link' href='/'>Home</a>
                     </li>
                     <li class='nav-item'>
                         <a class='nav-link' href='/analyze'>Analisis</a>
@@ -46,9 +46,9 @@ def show_navbar():
 
 
 def what_page():
-    # Get page from URL query params
-    query_params = st.query_params
-    page = query_params.get("page", "home")  # Default to 'Home' if none
+    # query_params = st.query_params
+    query_params = st.experimental_get_query_params()
+    page = query_params.get("page", ["home"])[0]  # Default ke 'home' kalau parameter tidak ada
     return page
 
 def hide_sidebar():
