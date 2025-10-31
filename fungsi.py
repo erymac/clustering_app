@@ -303,9 +303,9 @@ def linechart_evaluation (df_bkmeans, df_ahc): # untuk evaluasi perbandingan ked
         }
     )
     fig_silhouette.update_layout(
-        title=f'Silhouette Score',
+        title='Silhouette Score',
         title_font_size=20,
-        title=f'Skor Evaluasi Metode Clustering',
+        title='Skor Evaluasi Metode Clustering',
         title_font_size=20,
         xaxis=dict(
             tickmode='array',
