@@ -10,16 +10,16 @@ st.markdown("""
         <div class='nav-text navbar-nav'>
             <ul class='nav justify-content-end'>
                 <li class='nav-item'>
-                    <a class='nav-link' href='?page=home'>Home</a>
+                    <a class='nav-link' href='?page=home' target="_self">Home</a>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='?page=analyze'>Analisis</a>
+                    <a class='nav-link' href='?page=analyze' target="_self">Analisis</a>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='?page=about'>Tentang</a>
+                    <a class='nav-link' href='?page=about' target="_self">Tentang</a>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='?page=profile'>Profile</a>
+                    <a class='nav-link' href='?page=profile' target="_self">Profile</a>
                 </li>
             </ul>
         </div>
