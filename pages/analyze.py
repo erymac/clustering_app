@@ -25,10 +25,10 @@ st.markdown("""
                     <a class='nav-link' href='#'>Analisis</a>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='/?page=about'>Tentang</a>
+                    <a class='nav-link' href='/about?page=about'>Tentang</a>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='/?page=profile'>Profile</a>
+                    <a class='nav-link' href='/profile?page=profile'>Profile</a>
                 </li>
             </ul>
         </div>
