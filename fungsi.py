@@ -1237,10 +1237,10 @@ def proses_clustering_perbandingan(linkage, df_copy, df_temp, df_array, n_cluste
         st.write(f"##### {metode1}")
     with subsubcol[1]:
         st.write(f"##### {metode2}")
-    subsubcol = st.columns(2, gap="medium")
-    with subsubcol[0]:
+    subsubcols = st.columns(2, gap="medium")
+    with subsubcols[0]:
         show_map(df_copy, labels_bkmeans, bestcluster_bkmeans)
-    with subsubcol[1]:
+    with subsubcols[1]:
         show_map(df_copy, labels_ahc, bestcluster_ahc)
     show_map_explanation()
 
