@@ -155,7 +155,7 @@ if dataframe_mentah is not None:
 cols = st.columns(2, gap="large", vertical_alignment="top")
 with cols[0]:
     metode = st.multiselect(
-        "MMetode Clustering",
+        "Metode Clustering",
         options=["Bisecting K-Means", "Agglomerative Hierarchical Clustering"],
         default=["Agglomerative Hierarchical Clustering"],
         help="Pilih satu atau dua metode clustering untuk dibandingkan."
@@ -163,7 +163,7 @@ with cols[0]:
     enabled = metode != ""
     if "Agglomerative Hierarchical Clustering" in metode:
         linkage = st.selectbox(
-            "PParameter Linkage Agglomerative Hierarchical Clustering",
+            "Parameter Linkage Agglomerative Hierarchical Clustering",
             options=["ward", "complete", "average", "single"],
             index=0, width="stretch",
             help="Linkage menentukan cara pengukuran jarak antar cluster.",
