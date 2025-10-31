@@ -261,6 +261,8 @@ def fig_evaluate(df, metode):
 
     # Update the layout to ensure whole number ticks on the x-axis
     fig_eval.update_layout(
+        title='Skor Evaluasi ' + metode,
+        title_font_size=20,
         xaxis=dict(
             tickmode='array',
             tickvals=df_reset['Cluster'].unique(),
