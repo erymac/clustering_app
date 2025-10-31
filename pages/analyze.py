@@ -10,6 +10,12 @@ import os
 import pandas as pd
 from utils import show_navbar, hide_sidebar, show_footer, what_page
 
+st.set_page_config(
+    layout="wide", 
+    page_title="About",
+    page_icon="app/images/kacang_hijau_icon.png"
+    )
+
 hide_sidebar()
 
 st.markdown("""
@@ -54,12 +60,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("")
-
-st.set_page_config(
-    layout="wide", 
-    page_title="About",
-    page_icon="app/images/kacang_hijau_icon.png"
-    )
 
 with open( "app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
