@@ -13,6 +13,16 @@ from utils import show_navbar, hide_sidebar, show_footer, what_page
 hide_sidebar()
 show_navbar()
 
+# page = what_page()
+# if page == "home":
+#     st.switch_page("skripsi.py")
+# elif page == "analyze":
+#     st.switch_page("pages/analyze.py")
+# elif page == "about":
+#     st.switch_page("pages/about.py")
+# elif page == "profile":
+#     st.switch_page("pages/profile.py")
+
 st.set_page_config(
     layout="wide", 
     page_title="About",
@@ -112,3 +122,4 @@ if uploaded_file is not None:
         st.error(f"Terjadi kesalahan: {e}")
 
 show_footer()
+

@@ -6,6 +6,16 @@ import os
 hide_sidebar()
 show_navbar()
 
+# page = what_page()
+# if page == "home":
+#     st.switch_page("skripsi.py")
+# elif page == "analyze":
+#     st.switch_page("pages/analyze.py")
+# elif page == "about":
+#     st.switch_page("pages/about.py")
+# elif page == "profile":
+#     st.switch_page("pages/profile.py")
+
 st.set_page_config(
     layout="wide", 
     page_title="Profile",
@@ -63,3 +73,4 @@ with cols[1]:
 
 
 show_footer()
+
