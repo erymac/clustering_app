@@ -250,7 +250,7 @@ def fig_evaluate(df, metode):
     df_reset = df.reset_index()
 
     # Now you can plot using the 'Cluster' column explicitly
-    fig_bkmeans = px.line(df_reset,
+    fig_eval = px.line(df_reset,
                         x='Cluster',  # Use 'Cluster' as the x-axis
                         y=['Silhouette Score', 'DBI Score'],
                         markers=True,
@@ -260,7 +260,7 @@ def fig_evaluate(df, metode):
                         )
 
     # Update the layout to ensure whole number ticks on the x-axis
-    fig_bkmeans.update_layout(
+    fig_eval.update_layout(
         xaxis=dict(
             tickmode='array',
             tickvals=df_reset['Cluster'].unique(),
@@ -269,25 +269,26 @@ def fig_evaluate(df, metode):
     )
 
     # Tambah gridlines pada x-axis
-    fig_bkmeans.update_xaxes(
+    fig_eval.update_xaxes(
         showgrid=True,
         gridcolor='lightgrey',
         griddash='solid'
     )
 
     # Tambah gridlines pada y-axis
-    fig_bkmeans.update_yaxes(
+    fig_eval.update_yaxes(
         showgrid=True,
         gridcolor='lightgrey',
         griddash='solid'
     )
 
     # Display the plot
-    st.plotly_chart(fig_bkmeans, use_container_width=True)
+    st.plotly_chart(fig_eval, use_container_width=True)
 
 def linechart_evaluation (df_bkmeans, df_ahc): # untuk evaluasi perbandingan kedua metode
     method_dataframe = pd.concat([df_bkmeans, df_ahc], ignore_index=False)
     method_dataframe = method_dataframe.reset_index() # Reset index
+    df_bkmeans = df_bkmeans.reset_index()
 
     fig_silhouette = px.line(
         method_dataframe,
@@ -303,7 +304,14 @@ def linechart_evaluation (df_bkmeans, df_ahc): # untuk evaluasi perbandingan ked
     )
     fig_silhouette.update_layout(
         title=f'Silhouette Score',
-        title_font_size=20
+        title_font_size=20,
+        title=f'Nilai Evaluasi Metode Clustering',
+        title_font_size=20,
+        xaxis=dict(
+            tickmode='array',
+            tickvals=df_bkmeans['Cluster'].unique(),
+            ticktext=[str(int(x)) for x in df_bkmeans['Cluster'].unique()]
+        )
     )
 
     # Tambah gridlines pada x-axis
@@ -335,7 +343,12 @@ def linechart_evaluation (df_bkmeans, df_ahc): # untuk evaluasi perbandingan ked
     )
     fig_dbi.update_layout(
         title=f'DBI Score',
-        title_font_size=20
+        title_font_size=20,
+        xaxis=dict(
+            tickmode='array',
+            tickvals=df_bkmeans['Cluster'].unique(),
+            ticktext=[str(int(x)) for x in df_bkmeans['Cluster'].unique()]
+        )
     )
 
     # Tambah gridlines pada x-axis
