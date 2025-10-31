@@ -15,10 +15,10 @@ st.markdown("""
                     <a class='nav-link' href='/'>Home</a>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='/analyze?page=analyze'>Analisis</a>
+                    <a class='nav-link' href='/?page=analyze'>Analisis</a>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='/about?page=about'>Tentang</a>
+                    <a class='nav-link' href='/?page=about'>Tentang</a>
                 </li>
                 <li class='nav-item'>
                     <a class='nav-link' href='#'>Profile</a>

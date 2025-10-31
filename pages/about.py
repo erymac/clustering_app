@@ -13,13 +13,13 @@ st.markdown("""
                     <a class='nav-link' href='/'>Home</a>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='/analyze?page=analyze'>Analisis</a>
+                    <a class='nav-link' href='/?page=analyze'>Analisis</a>
                 </li>
                 <li class='nav-item'>
                     <a class='nav-link' href='#'>Tentang</a>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='/profile?page=profile'>Profile</a>
+                    <a class='nav-link' href='/?page=profile'>Profile</a>
                 </li>
             </ul>
         </div>
