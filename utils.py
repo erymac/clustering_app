@@ -8,16 +8,16 @@ def show_navbar():
             <div class='nav-text navbar-nav'>
                 <ul class='nav justify-content-end'>
                     <li class='nav-item'>
-                        <a class='nav-link' href='/home'>Home</a>
+                        <a class='nav-link' href="#" onclick="window.location.href='/home'">Home</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link' href='/analyze'>Analisis</a>
+                        <a class='nav-link' href="#" onclick="window.location.href='/analyze'">Analisis</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link' href='/about'>Tentang</a>
+                        <a class='nav-link' href="#" onclick="window.location.href='/about'">Tentang</a>
                     </li>
                     <li class='nav-item'>
-                        <a class='nav-link' href='/profile'>Profile</a>
+                        <a class='nav-link' href="#" onclick="window.location.href='/profile'">Profile</a>
                     </li>
                 </ul>
             </div>
