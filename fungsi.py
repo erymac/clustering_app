@@ -305,7 +305,7 @@ def linechart_evaluation (df_bkmeans, df_ahc): # untuk evaluasi perbandingan ked
     fig_silhouette.update_layout(
         title=f'Silhouette Score',
         title_font_size=20,
-        title=f'Nilai Evaluasi Metode Clustering',
+        title=f'Skor Evaluasi Metode Clustering',
         title_font_size=20,
         xaxis=dict(
             tickmode='array',
@@ -1112,7 +1112,6 @@ def proses_clustering(df, metode, cluster_labels, cluster_optimal, cluster_optio
         evaluate(cluster_optimal, dfwaktu, silhouette_df, dbi_df, cluster_option)
         subcol = st.columns([13,13], gap="medium", vertical_alignment='top', border=True)
         with subcol[0]:
-            st.write("##### Hasil Silhouette dan Davies-Bouldin Index")
             fig_evaluate(df_metode, metode)
         with subcol[1]:
             df_array = df.drop(['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Cluster', 'Kategori'], axis=1).values
