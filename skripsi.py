@@ -123,7 +123,7 @@ if dataframe_mentah is not None:
 cols = st.columns(2, gap="large", vertical_alignment="top")
 with cols[0]:
     metode = st.multiselect(
-        "Pilih metode clustering",
+        "Metode Clustering",
         options=["Bisecting K-Means", "Agglomerative Hierarchical Clustering"],
         default=["Agglomerative Hierarchical Clustering"],
         help="Pilih satu atau dua metode clustering untuk dibandingkan."
@@ -131,7 +131,7 @@ with cols[0]:
     enabled = metode != ""
     if "Agglomerative Hierarchical Clustering" in metode:
         linkage = st.selectbox(
-            "Pilih jenis linkage untuk Agglomerative Hierarchical Clustering",
+            "Pilih Parameter Linkage Agglomerative Hierarchical Clustering",
             options=["ward", "complete", "average", "single"],
             index=0, width="stretch",
             help="Linkage menentukan cara pengukuran jarak antar cluster.",
@@ -139,7 +139,7 @@ with cols[0]:
     
 with cols[1]:
     cluster_option = st.radio(
-        "Pilih jumlah cluster atau dengan rentang",
+        "Jumlah Cluster atau Pilih Rentang Cluster",
         options=["Jumlah cluster", "Rentang cluster"],
         horizontal=True,
         help="Pilih jumlah cluster data atau beberapa rentang jumlah cluster untuk dievaluasi."
@@ -147,7 +147,7 @@ with cols[1]:
 
     if cluster_option == "Jumlah cluster": # Pilih angka jumlah cluster
         cluster_value = st.slider(
-            "Pilih berapa banyak data ingin dikelompokkan", 
+            "Jumlah Kelompok (Cluster) Data", 
             min_value=2, max_value=5, step=1, value=3,
             help="Pilih jumlah cluster data yang diinginkan."
         )
