@@ -121,7 +121,7 @@ with cols[0]:
     enabled = metode != ""
     if "Agglomerative Hierarchical Clustering" in metode:
         linkage = st.selectbox(
-            "Pilih Parameter Linkage Agglomerative Hierarchical Clustering",
+            "Parameter Linkage Agglomerative Hierarchical Clustering",
             options=["ward", "complete", "average", "single"],
             index=0, width="stretch",
             help="Linkage menentukan cara pengukuran jarak antar cluster.",
