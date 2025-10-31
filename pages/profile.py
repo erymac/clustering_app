@@ -4,7 +4,49 @@ from utils import show_navbar, hide_sidebar, show_footer, what_page
 import os
 
 hide_sidebar()
-show_navbar()
+
+st.markdown("""
+<nav class='navbar fixed-top navbar-dark' style='background-color: #183a1d; padding-top: 17px;'>
+    <div class='container'>
+        <span class='nav-title' style='color: #f0e0b1;'>Clustering Data Kacang Hijau</span>
+        <div class='nav-text navbar-nav'>
+            <ul class='nav justify-content-end'>
+                <li class='nav-item'>
+                    <a class='nav-link' href='/'>Home</a>
+                </li>
+                <li class='nav-item'>
+                    <a class='nav-link' href='/analyze?page=analyze'>Analisis</a>
+                </li>
+                <li class='nav-item'>
+                    <a class='nav-link' href='/about?page=about'>Tentang</a>
+                </li>
+                <li class='nav-item'>
+                    <a class='nav-link' href='#'>Profile</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        .navbar-dark .navbar-nav .nav-link {
+            color: #f0e0b1;  /* Off-white text color */
+            transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
+        }
+
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: #ff6f61;  /* Bright orange on hover */
+        }
+
+        .navbar {
+            padding-top: 20px;  /* Adjust padding-top to make the navbar thicker at the top */
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown("")
 
 st.set_page_config(
     layout="wide", 

@@ -11,7 +11,49 @@ import streamlit as st
 import pandas as pd
 
 hide_sidebar()
-show_navbar()
+
+st.markdown("""
+<nav class='navbar fixed-top navbar-dark' style='background-color: #183a1d; padding-top: 17px;'>
+    <div class='container'>
+        <span class='nav-title' style='color: #f0e0b1;'>Clustering Data Kacang Hijau</span>
+        <div class='nav-text navbar-nav'>
+            <ul class='nav justify-content-end'>
+                <li class='nav-item'>
+                    <a class='nav-link' href='#'>Home</a>
+                </li>
+                <li class='nav-item'>
+                    <a class='nav-link' href='/analyze?page=analyze'>Analisis</a>
+                </li>
+                <li class='nav-item'>
+                    <a class='nav-link' href='/about?page=about'>Tentang</a>
+                </li>
+                <li class='nav-item'>
+                    <a class='nav-link' href='/profile?page=profile'>Profile</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        .navbar-dark .navbar-nav .nav-link {
+            color: #f0e0b1;  /* Off-white text color */
+            transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
+        }
+
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: #ff6f61;  /* Bright orange on hover */
+        }
+
+        .navbar {
+            padding-top: 20px;  /* Adjust padding-top to make the navbar thicker at the top */
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown("")
 
 st.set_page_config(
     layout="wide",
@@ -113,7 +155,7 @@ if dataframe_mentah is not None:
 cols = st.columns(2, gap="large", vertical_alignment="top")
 with cols[0]:
     metode = st.multiselect(
-        "Metode Clustering",
+        "MMetode Clustering",
         options=["Bisecting K-Means", "Agglomerative Hierarchical Clustering"],
         default=["Agglomerative Hierarchical Clustering"],
         help="Pilih satu atau dua metode clustering untuk dibandingkan."
