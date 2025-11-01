@@ -4,7 +4,7 @@ set_page_config("Clustering Data Kacang Hijau")
 hide_sidebar()
 
 if "instruction_shown" not in st.session_state:
-    st.session_state.instruction_shown = True
+    st.session_state.instruction_shown = False
 
 @st.dialog("Cara Kerja", width="large")
 def instruction():
@@ -90,10 +90,9 @@ elif page == "profile":
 else:
     home_page()
 
-if page == "home" and st.session_state.instruction_shown:
-    st.session_state.instruction_shown = True
+if page == "home" and not st.session_state.instruction_shown:
     instruction()
-    
+    st.session_state.instruction_shown = True
 
 show_footer()
 
