@@ -86,14 +86,15 @@ def show_footer():
     </div>
     """, unsafe_allow_html=True)
 
-def home_page():
-    #Home Page
+def set_page_config(page_title):
     st.set_page_config(
         layout="wide",
-        page_title="Home",
+        page_title=page_title,
         page_icon="app/images/kacang_hijau_icon.png"
     )
 
+def home_page():
+    #Home Page
     st.markdown("")
 
     st.markdown('<h1 class="custom-header" style="font-size:47px; align: center; color: black; margin-bottom: 36px; font-family: Inter;">Selamat Datang di Situs Clustering Data Kacang Hijau</h1>',
@@ -116,6 +117,35 @@ def home_page():
             file_name='Sampel Kacang Hijau 2010-2024.csv',
             use_container_width=True
         )
+
+    if 'instruction_shown' not in st.session_state:
+        st.session_state.instruction_shown = False
+
+    @st.dialog("Cara Kerja", width="large")
+    def instruction():
+        if not st.session_state.instruction_shown:
+            st.write("""
+            **Sumber data** dapat diunduh dari [BDSP](https://bdsp2.pertanian.go.id/bdsp/id/lokasi) atau menggunakan contoh 
+                    dataset yang diunduh melalui tombol "Template Upload Dataset".
+            
+            Berikut adalah alur penggunaan situs untuk melakukan clustering pada data kacang hijau :
+            1. **Unggah Data**: Klik "Browse files" dan unggah dataset dalam bentuk excel (.csv / .xlsx).
+            2. **Pilih Rentang Tahun**: Pilih rentang tahun yang ingin digunakan untuk proses clustering.
+            3. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
+            4. **Mulai Clustering**: Dataset yang diunggah dapat diproses setelah pengguna memencet tombol "Mulai Clustering".
+            5. **Lihat Hasil**: Setelah proses clustering selesai, hasil pengelompokan akan ditampilkan beserta metrik evaluasi.
+
+            Jenis linkage Agglomerative Hierarchical Clustering :
+            - Ward adalah metode yang meminimalkan variansi total dalam cluster.
+            - Complete adalah metode yang meminimalkan jarak maksimum antara titik dalam cluster.
+            - Average adalah metode yang meminimalkan jarak rata-rata antara titik dalam cluster.
+            - Single adalah metode yang meminimalkan jarak minimum antara titik dalam cluster.
+
+            """)
+            st.session_state.instruction_shown = True
+
+    if not st.session_state.instruction_shown:
+        instruction()
 
     uploaded_file = st.file_uploader("Unggah file dataset dalam excel (.csv / .xlsx)")
     dataframe_mentah = None
@@ -246,12 +276,6 @@ def home_page():
             st.error("⚠️ Harap setidaknya pilih salah satu metode clustering.")
 
 def analyze_page():
-    st.set_page_config(
-        layout="wide", 
-        page_title="About",
-        page_icon="app/images/kacang_hijau_icon.png"
-    )
-
     st.markdown('''<h1 class="custom-header" style="font-size:47px; align: center; color: black; margin-bottom: 26px; font-family: Inter;">
             Analisis Data
             </h1>''',
@@ -339,12 +363,6 @@ def analyze_page():
             st.error(f"Terjadi kesalahan: {e}")
 
 def about_page():
-    st.set_page_config(
-        layout="wide", 
-        page_title="About",
-        page_icon="app/images/kacang_hijau_icon.png"
-    )
-
     st.title('Tentang Situs Ini')
     st.markdown("<br><br>", unsafe_allow_html=True)
     cols = st.columns([3,1])
@@ -468,13 +486,6 @@ def about_page():
     """)
     
 def profile_page():
-
-    st.set_page_config(
-        layout="wide", 
-        page_title="Profile",
-        page_icon="app/images/kacang_hijau_icon.png"
-        )
-
     st.markdown('''<h1 class="custom-header" style="font-size:47px; align: center; color: black; margin-bottom: 36px; font-family: Inter;">
                 Profile
                 </h1>''',
