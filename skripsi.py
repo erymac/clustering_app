@@ -4,7 +4,7 @@ page = None
 if page is None:
     set_page_config("Clustering Data Kacang Hijau")
 else:
-    set_page_config(page)
+    set_page_config(f"{page} - Clustering Data Kacang Hijau")
 
 hide_sidebar()
 
