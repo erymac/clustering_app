@@ -51,37 +51,36 @@ with open("app/style.css" ) as css:
 st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous">', unsafe_allow_html=True)
 
 if 'instruction_shown' not in st.session_state:
-    st.session_state.instruction_shown = False
+    st.session_state.instruction_shown = True  
 
 @st.dialog("Cara Kerja", width="large")
 def instruction():
-    if not st.session_state.instruction_shown:
-        st.write("""
-        **Sumber data** dapat diunduh dari [BDSP](https://bdsp2.pertanian.go.id/bdsp/id/lokasi) atau menggunakan contoh 
-                dataset yang diunduh melalui tombol "Template Upload Dataset".
-        
-        Berikut adalah alur penggunaan situs untuk melakukan clustering pada data kacang hijau :
-        1. **Unggah Data**: Klik "Browse files" dan unggah dataset dalam bentuk excel (.csv / .xlsx).
-        2. **Pilih Rentang Tahun**: Pilih rentang tahun yang ingin digunakan untuk proses clustering.
-        3. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
-        4. **Mulai Clustering**: Dataset yang diunggah dapat diproses setelah pengguna memencet tombol "Mulai Clustering".
-        5. **Lihat Hasil**: Setelah proses clustering selesai, hasil pengelompokan akan ditampilkan beserta metrik evaluasi.
+    st.write("""
+    **Sumber data** dapat diunduh dari [BDSP](https://bdsp2.pertanian.go.id/bdsp/id/lokasi) atau menggunakan contoh 
+            dataset yang diunduh melalui tombol "Template Upload Dataset".
+    
+    Berikut adalah alur penggunaan situs untuk melakukan clustering pada data kacang hijau :
+    1. **Unggah Data**: Klik "Browse files" dan unggah dataset dalam bentuk excel (.csv / .xlsx).
+    2. **Pilih Rentang Tahun**: Pilih rentang tahun yang ingin digunakan untuk proses clustering.
+    3. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
+    4. **Mulai Clustering**: Dataset yang diunggah dapat diproses setelah pengguna memencet tombol "Mulai Clustering".
+    5. **Lihat Hasil**: Setelah proses clustering selesai, hasil pengelompokan akan ditampilkan beserta metrik evaluasi.
 
-        Jenis linkage Agglomerative Hierarchical Clustering :
-        - Ward adalah metode yang meminimalkan variansi total dalam cluster.
-        - Complete adalah metode yang meminimalkan jarak maksimum antara titik dalam cluster.
-        - Average adalah metode yang meminimalkan jarak rata-rata antara titik dalam cluster.
-        - Single adalah metode yang meminimalkan jarak minimum antara titik dalam cluster.
+    Jenis linkage Agglomerative Hierarchical Clustering :
+    - Ward adalah metode yang meminimalkan variansi total dalam cluster.
+    - Complete adalah metode yang meminimalkan jarak maksimum antara titik dalam cluster.
+    - Average adalah metode yang meminimalkan jarak rata-rata antara titik dalam cluster.
+    - Single adalah metode yang meminimalkan jarak minimum antara titik dalam cluster.
 
-        """)
-        st.session_state.instruction_shown = True
+    """)
 
 # ====== ROUTER ======
 page = st.query_params.get("page", "home").lower()
 
 if page == "home":
-    if not st.session_state.instruction_shown:
+    if st.session_state.instruction_shown:
         instruction()
+        st.session_state.instruction_shown = False
     home_page()
 elif page == "analyze":
     analyze_page()
