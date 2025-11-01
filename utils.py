@@ -117,8 +117,8 @@ def home_page():
             use_container_width=True
         )
 
-    if 'instruction_shown' not in st.session_state:
-        st.session_state.instruction_shown = False
+    if not st.session_state.get("instruction_shown", False):
+        instruction()
 
     @st.dialog("Cara Kerja", width="large")
     def instruction():
