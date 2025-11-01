@@ -1,11 +1,6 @@
 from utils import show_navbar, hide_sidebar, show_footer, home_page, analyze_page, about_page, profile_page, set_page_config
 import streamlit as st
-page = None
-if page is None:
-    set_page_config("Clustering Data Kacang Hijau")
-else:
-    set_page_config(f"{page} - Clustering Data Kacang Hijau")
-
+set_page_config("Clustering Data Kacang Hijau")
 hide_sidebar()
 
 st.markdown("""
