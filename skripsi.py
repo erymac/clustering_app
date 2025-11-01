@@ -2,6 +2,8 @@ from utils import show_navbar, hide_sidebar, show_footer, home_page, analyze_pag
 import streamlit as st
 
 hide_sidebar()
+if 'instruction_shown' not in st.session_state:
+    st.session_state.instruction_shown = False
 
 st.markdown("""
 <nav class='navbar fixed-top navbar-dark' style='background-color: #183a1d; padding-top: 17px;'>
@@ -54,10 +56,7 @@ st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap
 page = st.query_params.get("page", "home").lower()
 
 if page == "home":
-    if 'instruction_shown' not in st.session_state:
-        st.session_state.instruction_shown = False
-
-    @st.dialog("Cara Kerja", width="large")
+        @st.dialog("Cara Kerja", width="large")
     def instruction():
         if not st.session_state.instruction_shown:
             st.write("""
