@@ -1,6 +1,6 @@
 from utils import show_navbar, hide_sidebar, show_footer, home_page, analyze_page, about_page, profile_page, set_page_config
 import streamlit as st
-set_page_config("Clustering Data Kacang Hijau")
+
 hide_sidebar()
 
 st.markdown("""
@@ -54,12 +54,16 @@ st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap
 page = st.query_params.get("page", "home").lower()
 
 if page == "home":
+    set_page_config("Home - Clustering Data Kacang Hijau")
     home_page()
 elif page == "analyze":
+    set_page_config("Analisis - Clustering Data Kacang Hijau")
     analyze_page()
 elif page == "about":
+    set_page_config("Tentang - Clustering Data Kacang Hijau")
     about_page()
 elif page == "profile":
+    set_page_config("Profile - Clustering Data Kacang Hijau")
     profile_page()
 else:
     home_page()
