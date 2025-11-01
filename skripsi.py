@@ -56,7 +56,7 @@ st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap
 page = st.query_params.get("page", "home").lower()
 
 if page == "home":
-        @st.dialog("Cara Kerja", width="large")
+    @st.dialog("Cara Kerja", width="large")
     def instruction():
         if not st.session_state.instruction_shown:
             st.write("""
