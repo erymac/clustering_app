@@ -50,8 +50,8 @@ with open("app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous">', unsafe_allow_html=True)
 
-if 'instruction_shown' not in st.session_state:
-    st.session_state.instruction_shown = True  
+# if 'instruction_shown' not in st.session_state:
+#     st.session_state.instruction_shown = False
 
 @st.dialog("Cara Kerja", width="large")
 def instruction():
@@ -78,9 +78,8 @@ def instruction():
 page = st.query_params.get("page", "home").lower()
 
 if page == "home":
-    if st.session_state.instruction_shown:
-        instruction()
-        st.session_state.instruction_shown = False
+    # if not st.session_state.instruction_shown:
+    #     instruction()
     home_page()
 elif page == "analyze":
     analyze_page()
@@ -90,6 +89,10 @@ elif page == "profile":
     profile_page()
 else:
     home_page()
+
+if page == "home" and not st.session_state.instruction_shown:
+    instruction()
+    st.session_state.instruction_shown = True
 
 show_footer()
 
