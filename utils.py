@@ -117,35 +117,6 @@ def home_page():
             use_container_width=True
         )
 
-    if 'instruction_shown' not in st.session_state:
-        st.session_state.instruction_shown = False
-
-    @st.dialog("Cara Kerja", width="large")
-    def instruction():
-        if not st.session_state.instruction_shown:
-            st.write("""
-            **Sumber data** dapat diunduh dari [BDSP](https://bdsp2.pertanian.go.id/bdsp/id/lokasi) atau menggunakan contoh 
-                    dataset yang diunduh melalui tombol "Template Upload Dataset".
-            
-            Berikut adalah alur penggunaan situs untuk melakukan clustering pada data kacang hijau :
-            1. **Unggah Data**: Klik "Browse files" dan unggah dataset dalam bentuk excel (.csv / .xlsx).
-            2. **Pilih Rentang Tahun**: Pilih rentang tahun yang ingin digunakan untuk proses clustering.
-            3. **Pilih Algoritma dan Parameter**: Pilih algoritma dan jumlah cluster yang ingin diterapkan pada dataset Anda.
-            4. **Mulai Clustering**: Dataset yang diunggah dapat diproses setelah pengguna memencet tombol "Mulai Clustering".
-            5. **Lihat Hasil**: Setelah proses clustering selesai, hasil pengelompokan akan ditampilkan beserta metrik evaluasi.
-
-            Jenis linkage Agglomerative Hierarchical Clustering :
-            - Ward adalah metode yang meminimalkan variansi total dalam cluster.
-            - Complete adalah metode yang meminimalkan jarak maksimum antara titik dalam cluster.
-            - Average adalah metode yang meminimalkan jarak rata-rata antara titik dalam cluster.
-            - Single adalah metode yang meminimalkan jarak minimum antara titik dalam cluster.
-
-            """)
-            st.session_state.instruction_shown = True
-
-    if not st.session_state.get("instruction_shown", False):
-        instruction()
-
     uploaded_file = st.file_uploader("Unggah file dataset dalam excel (.csv / .xlsx)")
     dataframe_mentah = None
     if uploaded_file is not None:
