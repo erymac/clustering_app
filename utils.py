@@ -117,8 +117,8 @@ def home_page():
             use_container_width=True
         )
 
-    if not st.session_state.get("instruction_shown", False):
-        instruction()
+    if 'instruction_shown' not in st.session_state:
+        st.session_state.instruction_shown = False
 
     @st.dialog("Cara Kerja", width="large")
     def instruction():
@@ -143,7 +143,7 @@ def home_page():
             """)
             st.session_state.instruction_shown = True
 
-    if not st.session_state.instruction_shown:
+    if not st.session_state.get("instruction_shown", False):
         instruction()
 
     uploaded_file = st.file_uploader("Unggah file dataset dalam excel (.csv / .xlsx)")
