@@ -92,9 +92,10 @@ def set_page_config(page_title):
         page_title=page_title,
         page_icon="app/images/kacang_hijau_icon.png"
     )
-
+    
+#Home Page
 def home_page():
-    #Home Page
+    st.markdown("<script>document.title = 'Home - Clustering Data Kacang Hijau';</script>", unsafe_allow_html=True)
     st.markdown("")
 
     st.markdown('<h1 class="custom-header" style="font-size:47px; align: center; color: black; margin-bottom: 36px; font-family: Inter;">Selamat Datang di Situs Clustering Data Kacang Hijau</h1>',
