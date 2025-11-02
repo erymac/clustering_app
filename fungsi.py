@@ -1137,7 +1137,8 @@ def proses_clustering(df, metode, cluster_labels, cluster_optimal, cluster_optio
     # DETAIL HASIL CLUSTER
     subcol = st.columns(2, gap="medium", border=True)
     with subcol[0]:
-        plot_data_cluster(df, df['Cluster'], metode)
+        pca_df = df.drop(['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Cluster', 'Kategori'], axis=1)
+        plot_data_cluster(pca_df, df['Cluster'], metode)
     with subcol[1]:
         show_n_cluster(df, df["Cluster"], metode)
 
@@ -1254,6 +1255,8 @@ def proses_clustering_perbandingan(linkage, df_copy, df_temp, df_array, n_cluste
     # DETAIL RUANG HASIL CLUSTER
     subcol = st.columns(2, gap="medium", border=True)
     with subcol[0]:
-        plot_data_cluster(df_copy, df_copy['Cluster BKM'], metode1)
+        pca_df = df_copy.drop(['Lokasi', 'Luas Panen', 'Produksi', 'Produktivitas', 'Cluster BKM', 'Cluster AHC',
+                                'Kategori (Bisecting K-Means)', 'Kategori (Agglomerative Clustering)', 'Cluster'], axis=1)
+        plot_data_cluster(pca_df, df_copy['Cluster BKM'], metode1)
     with subcol[1]:
-        plot_data_cluster(df_copy, df_copy["Cluster AHC"], metode2)
+        plot_data_cluster(pca_df, df_copy["Cluster AHC"], metode2)
